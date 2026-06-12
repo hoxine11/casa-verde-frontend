@@ -175,7 +175,7 @@ export default function AdminProducts({
 
       if (editProduct) {
         await fetch(
-          `https://casa-verde-production-2e18.up.railway.app/api/products/${editProduct.id}`,
+          `https://casa-verde-production-1d5f.up.railway.app/api/products/${editProduct.id}`,
           {
             method: "PUT",
             body: formData
@@ -183,7 +183,7 @@ export default function AdminProducts({
         );
       } else {
         await fetch(
-          "https://casa-verde-production-2e18.up.railway.app/api/products",
+          "https://casa-verde-production-1d5f.up.railway.app/api/products",
           {
             method: "POST",
             body: formData
@@ -565,7 +565,7 @@ export default function AdminProducts({
       );
 
       await fetch(
-        `https://casa-verde-production-2e18.up.railway.app/api/products/${product.id}`,
+        `https://casa-verde-production-1d5f.up.railway.app/api/products/${product.id}`,
         {
           method: "PUT",
           headers: {
@@ -607,7 +607,7 @@ export default function AdminProducts({
 
                           try {
                             await fetch(
-                              `https://casa-verde-production-2e18.up.railway.app/api/products/${product.id}`,
+                              `https://casa-verde-production-1d5f.up.railway.app/api/products/${product.id}`,
                               {
                                 method: "DELETE"
                               }
