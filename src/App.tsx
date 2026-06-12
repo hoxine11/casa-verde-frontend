@@ -233,7 +233,6 @@ export default function App() {
   const [checkoutName, setCheckoutName] = useState('');
   const [checkoutPhone, setCheckoutPhone] = useState('');
   const [checkoutAddress, setCheckoutAddress] = useState('');
-  const [checkoutNeighborhood, setCheckoutNeighborhood] = useState('Centre Ville');
   const [checkoutComment, setCheckoutComment] = useState('');
 
   // Succeeded order placeholder for tracking
@@ -310,7 +309,6 @@ export default function App() {
         customerName: checkoutName,
         phone: checkoutPhone,
         address: checkoutAddress,
-        neighborhood: checkoutNeighborhood,
         comment: checkoutComment,
 
         subtotal: cartSubtotal,
@@ -1120,7 +1118,7 @@ const handleAddCategory = async (name: string) => {
 
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 font-sans text-xs">
+                  <div className="grid grid-cols-1 gap-5 font-sans text-xs">
 
                     {/* Full Street Address */}
                     <div className="sm:col-span-2 space-y-2">
@@ -1136,21 +1134,7 @@ const handleAddCategory = async (name: string) => {
                     </div>
 
                     {/* Secteur / Quartier Dropdown select */}
-                    <div className="space-y-2">
-                      <label className="text-brand-green font-semibold block">Quartier / Secteur *</label>
-                      <select
-                        value={checkoutNeighborhood}
-                        onChange={(e) => setCheckoutNeighborhood(e.target.value)}
-                        className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold cursor-pointer"
-                      >
-                        <option value="Centre Ville">Centre Ville</option>
-                        <option value="Sidi M'Hamed">Sidi M'Hamed</option>
-                        <option value="El Biar">El Biar</option>
-                        <option value="Hydra">Hydra</option>
-                        <option value="Didouche">Didouche</option>
-                        <option value="Telemly">Telemly</option>
-                      </select>
-                    </div>
+                    
 
                   </div>
 
