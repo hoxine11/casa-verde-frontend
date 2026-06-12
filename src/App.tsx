@@ -143,7 +143,7 @@ export default function App() {
     console.log("Categories loaded:", categories);
   }, [categories]);
   useEffect(() => {
-    fetch("https://casa-verde-production-2e18.up.railway.app/api/categories")
+    fetch("https://casa-verde-production-1d5f.up.railway.app/api/categories")
       .then((res) => res.json())
       .then((data) => {
         setCategories(data);
@@ -158,7 +158,7 @@ export default function App() {
     console.log("Products loaded:", products);
   }, [products]);
   useEffect(() => {
-    fetch("https://casa-verde-production-2e18.up.railway.app/api/products")
+    fetch("https://casa-verde-production-1d5f.up.railway.app/api/products")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
@@ -169,7 +169,7 @@ export default function App() {
   }, []);
   const refreshCategories = async () => {
     const res = await fetch(
-      "https://casa-verde-production-2e18.up.railway.app/api/categories"
+      "https://casa-verde-production-1d5f.up.railway.app/api/categories"
     );
 
     const data = await res.json();
@@ -179,7 +179,7 @@ export default function App() {
 
   const refreshProducts = async () => {
     const res = await fetch(
-      "https://casa-verde-production-2e18.up.railway.app/api/products"
+      "https://casa-verde-production-1d5f.up.railway.app/api/products"
     );
 
     const data = await res.json();
@@ -194,7 +194,7 @@ export default function App() {
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    fetch("https://casa-verde-production-2e18.up.railway.app/api/orders")
+    fetch("https://casa-verde-production-1d5f.up.railway.app/api/orders")
       .then((res) => res.json())
       .then((data) => {
         console.log("ORDERS API =>", data);
@@ -325,7 +325,7 @@ export default function App() {
       };
 
       await fetch(
-        "https://casa-verde-production-2e18.up.railway.app/api/orders",
+        "https://casa-verde-production-1d5f.up.railway.app/api/orders",
         {
           method: "POST",
           headers: {
@@ -336,7 +336,7 @@ export default function App() {
       );
 
       const ordersRes = await fetch(
-        "https://casa-verde-production-2e18.up.railway.app/api/orders"
+        "https://casa-verde-production-1d5f.up.railway.app/api/orders"
       );
 
       const ordersData =
@@ -380,7 +380,7 @@ export default function App() {
   ) => {
     try {
       await fetch(
-        `https://casa-verde-production-2e18.up.railway.app/api/orders/${id}/status`,
+        `https://casa-verde-production-1d5f.up.railway.app/api/orders/${id}/status`,
         {
           method: "PUT",
           headers: {
@@ -391,7 +391,7 @@ export default function App() {
       );
 
       const res = await fetch(
-        "https://casa-verde-production-2e18.up.railway.app/api/orders"
+        "https://casa-verde-production-1d5f.up.railway.app/api/orders"
       );
 
       const data = await res.json();
@@ -420,14 +420,14 @@ export default function App() {
   const handleDeleteOrder = async (id: number) => {
     try {
       await fetch(
-        `https://casa-verde-production-2e18.up.railway.app/api/orders/${id}`,
+        `https://casa-verde-production-1d5f.up.railway.app/api/orders/${id}`,
         {
           method: "DELETE",
         }
       );
 
       const res = await fetch(
-        "https://casa-verde-production-2e18.up.railway.app/api/orders"
+        "https://casa-verde-production-1d5f.up.railway.app/api/orders"
       );
 
       const data = await res.json();
@@ -1320,7 +1320,7 @@ export default function App() {
                       try {
 
                         const res = await fetch(
-                          "https://casa-verde-production-2e18.up.railway.app/api/admin/login",
+                          "https://casa-verde-production-1d5f.up.railway.app/api/admin/login",
                           {
                             method: "POST",
                             headers: {
