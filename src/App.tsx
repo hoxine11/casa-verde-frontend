@@ -53,7 +53,7 @@ const INITIAL_SETTINGS: Settings = {
   restaurantName: 'Casa Verde – Crêperie AS',
   phone: '+213 5 55 12 34 56',
   address: 'Rue Didouche Mourad, Alger Centre',
-  deliveryFee: 200,
+  deliveryFee: 0,
   facebook: 'https://facebook.com/casaverde',
   instagram: 'https://instagram.com/casaverde'
 };
