@@ -471,17 +471,43 @@ export default function App() {
     setProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
-  const handleAddCategory = (name: string) => {
-    const newCat: Category = {
-      id: Date.now(),
-      name
-    };
-    setCategories((prev) => [...prev, newCat]);
-  };
+const handleAddCategory = async (name: string) => {
+  try {
+    await fetch(
+      "https://casa-verde-production-1d5f.up.railway.app/api/categories",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name })
+      }
+    );
 
-  const handleDeleteCategory = (id: number) => {
-    setCategories((prev) => prev.filter((c) => c.id !== id));
-  };
+    await refreshCategories();
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+  const handleDeleteCategory = async (
+  id: number
+) => {
+  try {
+    await fetch(
+      `https://casa-verde-production-1d5f.up.railway.app/api/categories/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    await refreshCategories();
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   // Interactive sample products adder for ease of grading (since menu starts empty per constraints)
 
