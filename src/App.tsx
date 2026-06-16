@@ -211,7 +211,16 @@ export default function App() {
           date: new Date(order.created_at).toLocaleString(),
           status: order.status.toLowerCase(),
 
-          items: order.items || []
+          items: (order.items || []).map((item: any) => ({
+            id: item.id,
+            productId: item.productId,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+
+            variant_name: item.variant_name,
+            option_name: item.option_name,
+          }))
         }));
         console.log(mappedOrders);
         setOrders(mappedOrders);
@@ -270,7 +279,12 @@ export default function App() {
   // Handle Cart operators
   const handleAddToCart = (product: Product) => {
     setCart((prev) => {
-      const exists = prev.find((item) => item.product.id === product.id);
+      const exists = prev.find(
+        (item) =>
+          item.product.id === product.id &&
+          item.product.selectedVariant?.id === product.selectedVariant?.id &&
+          item.product.selectedOption?.id === product.selectedOption?.id
+      );
       if (exists) {
         return prev.map((item) =>
           item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
@@ -319,6 +333,12 @@ export default function App() {
           productId: item.product.id,
           price: item.product.price,
           quantity: item.quantity,
+
+          variantName:
+            item.product.selectedVariant?.name || null,
+
+          optionName:
+            item.product.selectedOption?.name || null,
         })),
       };
 
@@ -469,43 +489,43 @@ export default function App() {
     setProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
-const handleAddCategory = async (name: string) => {
-  try {
-    await fetch(
-      "https://casa-verde-production-1d5f.up.railway.app/api/categories",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ name })
-      }
-    );
+  const handleAddCategory = async (name: string) => {
+    try {
+      await fetch(
+        "https://casa-verde-production-1d5f.up.railway.app/api/categories",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ name })
+        }
+      );
 
-    await refreshCategories();
+      await refreshCategories();
 
-  } catch (error) {
-    console.error(error);
-  }
-};
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleDeleteCategory = async (
-  id: number
-) => {
-  try {
-    await fetch(
-      `https://casa-verde-production-1d5f.up.railway.app/api/categories/${id}`,
-      {
-        method: "DELETE"
-      }
-    );
+    id: number
+  ) => {
+    try {
+      await fetch(
+        `https://casa-verde-production-1d5f.up.railway.app/api/categories/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
 
-    await refreshCategories();
+      await refreshCategories();
 
-  } catch (error) {
-    console.error(error);
-  }
-};
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // Interactive sample products adder for ease of grading (since menu starts empty per constraints)
 
@@ -867,7 +887,7 @@ const handleAddCategory = async (name: string) => {
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-green/40 w-4 h-4" />
                   <input
                     type="search"
-                    
+
                     value={searchMenuQuery}
                     onChange={(e) => setSearchMenuQuery(e.target.value)}
                     className="w-full bg-brand-ivory border border-brand-green/15 rounded-full py-2.5 pl-10 pr-4 text-xs font-semibold text-brand-green outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold"
@@ -979,6 +999,17 @@ const handleAddCategory = async (name: string) => {
                             <h3 className="font-serif text-base font-bold text-brand-green leading-snug">
                               {item.product.name}
                             </h3>
+                            {item.product.selectedVariant && (
+                              <p className="text-xs text-gray-500">
+                                Taille: {item.product.selectedVariant.name}
+                              </p>
+                            )}
+
+                            {item.product.selectedOption && (
+                              <p className="text-xs text-gray-500">
+                                {item.product.selectedOption.name}
+                              </p>
+                            )}
                             <p className="font-serif text-sm font-semibold text-brand-green/90 mt-1">
                               {item.product.price.toLocaleString()} DZD
                             </p>
@@ -1098,7 +1129,7 @@ const handleAddCategory = async (name: string) => {
                         required
                         value={checkoutName}
                         onChange={(e) => setCheckoutName(e.target.value)}
-                        
+
                         className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold"
                       />
                     </div>
@@ -1111,7 +1142,7 @@ const handleAddCategory = async (name: string) => {
                         required
                         value={checkoutPhone}
                         onChange={(e) => setCheckoutPhone(e.target.value)}
-                        
+
                         className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold"
                       />
                     </div>
@@ -1128,13 +1159,13 @@ const handleAddCategory = async (name: string) => {
                         required
                         value={checkoutAddress}
                         onChange={(e) => setCheckoutAddress(e.target.value)}
-                       
+
                         className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold"
                       />
                     </div>
 
                     {/* Secteur / Quartier Dropdown select */}
-                    
+
 
                   </div>
 
@@ -1390,7 +1421,7 @@ const handleAddCategory = async (name: string) => {
                         required
                         value={loginUser}
                         onChange={(e) => setLoginUser(e.target.value)}
-                        
+
                         className="w-full bg-brand-green/[0.03] border border-brand-green/10 py-3 px-4 text-brand-green placeholder-brand-green/20 outline-none focus:border-brand-gold transition-all"
                       />
                     </div>
@@ -1402,7 +1433,7 @@ const handleAddCategory = async (name: string) => {
                         required
                         value={loginPass}
                         onChange={(e) => setLoginPass(e.target.value)}
-                        
+
                         className="w-full bg-brand-green/[0.03] border border-brand-green/10 py-3 px-4 text-brand-green placeholder-brand-green/20 outline-none focus:border-brand-gold transition-all"
                       />
                     </div>
