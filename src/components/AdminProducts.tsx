@@ -28,17 +28,21 @@ export default function AdminProducts({
   const [category, setCategory] = useState('');
   const [image, setImage] = useState('');
   const [isActive, setIsActive] = useState(true);
-  const [variants, setVariants] = useState([
+  const [variants, setVariants] = useState<
+    { name: string; price: number }[]
+  >([
     {
       name: "",
-      price: ""
+      price: 0
     }
   ]);
 
-  const [options, setOptions] = useState([
+  const [options, setOptions] = useState<
+    { name: string; price: number }[]
+  >([
     {
       name: "",
-      price: ""
+      price: 0
     }
   ]);
   // Photo taking & uploading state
@@ -137,6 +141,8 @@ export default function AdminProducts({
     setCategory(product.category);
     setImage(product.image_url);
     setIsActive(product.is_active);
+    setVariants(product.variants || []);
+    setOptions(product.options || []);
     setIsEditing(true);
     if (product.image_url && (product.image_url.startsWith('http') || product.image_url.startsWith('/'))) {
       setUploadSource('url');
@@ -396,7 +402,7 @@ export default function AdminProducts({
                       value={variant.price}
                       onChange={(e) => {
                         const copy = [...variants];
-                        copy[index].price = e.target.value;
+                        copy[index].price = Number(e.target.value);
                         setVariants(copy);
                       }}
                       className="border rounded p-2 flex-1"
@@ -409,7 +415,7 @@ export default function AdminProducts({
                   onClick={() =>
                     setVariants([
                       ...variants,
-                      { name: "", price: "" }
+                      { name: "", price: 0 }
                     ])
                   }
                   className="text-sm text-blue-600"
@@ -447,7 +453,7 @@ export default function AdminProducts({
                       value={option.price}
                       onChange={(e) => {
                         const copy = [...options];
-                        copy[index].price = e.target.value;
+                        copy[index].price = Number(e.target.value);
                         setOptions(copy);
                       }}
                       className="border rounded p-2 flex-1"
@@ -460,7 +466,7 @@ export default function AdminProducts({
                   onClick={() =>
                     setOptions([
                       ...options,
-                      { name: "", price: "" }
+                      { name: "", price: 0 }
                     ])
                   }
                   className="text-sm text-blue-600"
@@ -775,7 +781,8 @@ export default function AdminProducts({
                     </div>
 
                   </div>
-                )})}
+                )
+              })}
             </div>
           )}
         </div>
