@@ -208,13 +208,20 @@ export default function AdminProducts({
       }
 
       if (editProduct) {
-        await fetch(
+
+        const res = await fetch(
           `https://casa-verde-production-1d5f.up.railway.app/api/products/${editProduct.id}`,
           {
             method: "PUT",
             body: formData
           }
         );
+
+        const data = await res.json();
+
+        console.log("PUT STATUS =", res.status);
+        console.log("PUT RESPONSE =", data);
+
       } else {
         await fetch(
           "https://casa-verde-production-1d5f.up.railway.app/api/products",
