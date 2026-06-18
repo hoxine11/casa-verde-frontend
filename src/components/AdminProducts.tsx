@@ -655,11 +655,13 @@ export default function AdminProducts({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product) => {
                 const minPrice =
-                  Math.min(
-                    ...(product.variants ?? []).map((v) =>
-                      Number(v.price)
+                  product.variants && product.variants.length > 0
+                    ? Math.min(
+                      ...product.variants.map(v =>
+                        Number(v.price)
+                      )
                     )
-                  ) || Number(product.price);
+                    : Number(product.price);
                 return (
                   <div
                     key={product.id}
