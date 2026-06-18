@@ -168,7 +168,12 @@ export default function AdminProducts({
 
       formData.append("name", name);
       formData.append("description", description);
-      formData.append("price", String(price));
+      formData.append(
+        "price",
+        category.toLowerCase() === "tacos"
+          ? "0"
+          : String(price)
+      );
       console.log("CATEGORY =", selectedCategory);
       console.log("CATEGORY ID =", selectedCategory?.id);
       formData.append(
@@ -277,18 +282,28 @@ export default function AdminProducts({
               </div>
 
               {/* Price field */}
-              <div className="space-y-2">
-                <label className="text-brand-green block">Prix (DZD) *</label>
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value === '' ? '' : Number(e.target.value))}
-                  placeholder="ex: 750"
-                  className="w-full bg-brand-green/5 border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green placeholder-brand-green/30 outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold transition-all"
-                />
-              </div>
+
+              {category.toLowerCase() !== "tacos" && (
+                <div className="space-y-2">
+                  <label className="text-brand-green block">
+                    Prix (DZD)
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={price}
+                    onChange={(e) =>
+                      setPrice(
+                        e.target.value === ""
+                          ? ""
+                          : Number(e.target.value)
+                      )
+                    }
+                    className="w-full bg-brand-green/5 border border-brand-green/10 rounded-xl py-3 px-4"
+                  />
+                </div>
+              )}
 
             </div>
 
@@ -353,105 +368,107 @@ export default function AdminProducts({
               />
             </div>
             {category === "Tacos" && (
-            <div className="space-y-3 border-t border-brand-green/10 pt-4">
-              <label className="font-bold text-brand-green">
-                Tailles
-              </label>
+              <div className="space-y-3 border-t border-brand-green/10 pt-4">
+                <label className="font-bold text-brand-green">
+                  Tailles
+                </label>
 
-              {variants.map((variant, index) => (
-                <div
-                  key={index}
-                  className="flex gap-3"
+                {variants.map((variant, index) => (
+                  <div
+                    key={index}
+                    className="flex gap-3"
+                  >
+                    <input
+                      type="text"
+                      placeholder="M"
+                      value={variant.name}
+                      onChange={(e) => {
+                        const copy = [...variants];
+                        copy[index].name = e.target.value;
+                        setVariants(copy);
+                      }}
+                      className="border rounded p-2 flex-1"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="500"
+                      value={variant.price}
+                      onChange={(e) => {
+                        const copy = [...variants];
+                        copy[index].price = e.target.value;
+                        setVariants(copy);
+                      }}
+                      className="border rounded p-2 flex-1"
+                    />
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVariants([
+                      ...variants,
+                      { name: "", price: "" }
+                    ])
+                  }
+                  className="text-sm text-blue-600"
                 >
-                  <input
-                    type="text"
-                    placeholder="M"
-                    value={variant.name}
-                    onChange={(e) => {
-                      const copy = [...variants];
-                      copy[index].name = e.target.value;
-                      setVariants(copy);
-                    }}
-                    className="border rounded p-2 flex-1"
-                  />
-
-                  <input
-                    type="number"
-                    placeholder="500"
-                    value={variant.price}
-                    onChange={(e) => {
-                      const copy = [...variants];
-                      copy[index].price = e.target.value;
-                      setVariants(copy);
-                    }}
-                    className="border rounded p-2 flex-1"
-                  />
-                </div>
-              ))}
-
-              <button
-                type="button"
-                onClick={() =>
-                  setVariants([
-                    ...variants,
-                    { name: "", price: "" }
-                  ])
-                }
-                className="text-sm text-blue-600"
-              >
-                + Ajouter Taille
-              </button>
-            </div>
+                  + Ajouter Taille
+                </button>
+              </div>
             )}
-            <div className="space-y-3">
-              <label className="font-bold text-brand-green">
-                Options
-              </label>
+            {category.toLowerCase() !== "tacos" && (
+              <div className="space-y-3">
+                <label className="font-bold text-brand-green">
+                  Options
+                </label>
 
-              {options.map((option, index) => (
-                <div
-                  key={index}
-                  className="flex gap-3"
+                {options.map((option, index) => (
+                  <div
+                    key={index}
+                    className="flex gap-3"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Camembert"
+                      value={option.name}
+                      onChange={(e) => {
+                        const copy = [...options];
+                        copy[index].name = e.target.value;
+                        setOptions(copy);
+                      }}
+                      className="border rounded p-2 flex-1"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="100"
+                      value={option.price}
+                      onChange={(e) => {
+                        const copy = [...options];
+                        copy[index].price = e.target.value;
+                        setOptions(copy);
+                      }}
+                      className="border rounded p-2 flex-1"
+                    />
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOptions([
+                      ...options,
+                      { name: "", price: "" }
+                    ])
+                  }
+                  className="text-sm text-blue-600"
                 >
-                  <input
-                    type="text"
-                    placeholder="Camembert"
-                    value={option.name}
-                    onChange={(e) => {
-                      const copy = [...options];
-                      copy[index].name = e.target.value;
-                      setOptions(copy);
-                    }}
-                    className="border rounded p-2 flex-1"
-                  />
-
-                  <input
-                    type="number"
-                    placeholder="100"
-                    value={option.price}
-                    onChange={(e) => {
-                      const copy = [...options];
-                      copy[index].price = e.target.value;
-                      setOptions(copy);
-                    }}
-                    className="border rounded p-2 flex-1"
-                  />
-                </div>
-              ))}
-
-              <button
-                type="button"
-                onClick={() =>
-                  setOptions([
-                    ...options,
-                    { name: "", price: "" }
-                  ])
-                }
-                className="text-sm text-blue-600"
-              >
-                + Ajouter Option
-              </button>
-            </div>
+                  + Ajouter Option
+                </button>
+              </div>
+            )}
             {/* Image Upload/Capture Panel */}
             <div className="space-y-3 pt-3 border-t border-brand-green/10">
               <label className="text-brand-green font-bold block text-xs">Visuel du produit (Photo ou Image)</label>
