@@ -277,6 +277,8 @@ ${order.status === 'pending'
               {/* Ordered Products list */}
               <div className="py-4 border-b border-brand-green/10">
                 <h4 className="font-serif text-sm font-semibold text-brand-green mb-3">Détail des plats</h4>
+                console.log("SELECTED ORDER =", selectedOrder);
+console.log("ITEMS =", selectedOrder.items);
                 <ul className="space-y-3 font-sans text-xs">
                   {selectedOrder.items.map((item) => (
                     <li
