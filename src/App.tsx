@@ -292,6 +292,8 @@ export default function App() {
 
   // Handle Cart operators
   const handleAddToCart = (product: Product) => {
+    console.log("ADDING PRODUCT =", product);
+    console.log("SELECTED OPTION =", product.selectedOption);
     setCart((prev) => {
       const exists = prev.find(
         (item) =>
@@ -333,6 +335,7 @@ export default function App() {
     e.preventDefault();
 
     try {
+      console.log("CART =", cart);
       const payload = {
         customerName: checkoutName,
         phone: checkoutPhone,
