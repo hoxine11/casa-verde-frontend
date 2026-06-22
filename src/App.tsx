@@ -364,7 +364,10 @@ export default function App() {
             item.product.selectedOption?.name || null,
         }))
       };
-
+      console.log(
+        "PAYLOAD =",
+        JSON.stringify(payload, null, 2)
+      );
       await fetch(
         "https://casa-verde-production-1d5f.up.railway.app/api/orders",
         {
