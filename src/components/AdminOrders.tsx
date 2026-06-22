@@ -279,9 +279,7 @@ ${order.status === 'pending'
               <div className="py-4 border-b border-brand-green/10">
 
                 <h4 className="font-serif text-sm font-semibold text-brand-green mb-3">Détail des plats</h4>
-                <pre>
-                  {JSON.stringify(selectedOrder.items, null, 2)}
-                </pre>
+               
                 <ul className="space-y-3 font-sans text-xs">
                   {selectedOrder.items.map((item) => (
                     <li
