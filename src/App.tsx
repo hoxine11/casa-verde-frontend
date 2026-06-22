@@ -272,8 +272,13 @@ export default function App() {
       (sum, item) =>
         sum +
         (
-          item.product.selectedVariant?.price ||
-          item.product.price
+          Number(
+            item.product.selectedVariant?.price ||
+            item.product.price
+          ) +
+          Number(
+            item.product.selectedOption?.price || 0
+          )
         ) *
         item.quantity,
       0
@@ -342,8 +347,13 @@ export default function App() {
           productId: item.product.id,
 
           price:
-            item.product.selectedVariant?.price ||
-            item.product.price,
+            Number(
+              item.product.selectedVariant?.price ||
+              item.product.price
+            ) +
+            Number(
+              item.product.selectedOption?.price || 0
+            ),
 
           quantity: item.quantity,
 
@@ -1016,17 +1026,23 @@ export default function App() {
                               <p className="text-xs text-gray-500">
                                 Taille: {item.product.selectedVariant.name}
                               </p>
+
                             )}
 
                             {item.product.selectedOption && (
                               <p className="text-xs text-gray-500">
-                                {item.product.selectedOption.name}
+                                Option : {item.product.selectedOption.name}
                               </p>
                             )}
                             <p className="font-serif text-sm font-semibold text-brand-green/90 mt-1">
                               {(
-                                item.product.selectedVariant?.price ||
-                                item.product.price
+                                Number(
+                                  item.product.selectedVariant?.price ||
+                                  item.product.price
+                                ) +
+                                Number(
+                                  item.product.selectedOption?.price || 0
+                                )
                               ).toLocaleString()} DZD
                             </p>
                           </div>
@@ -1215,8 +1231,13 @@ export default function App() {
                           <span className="font-bold">
                             {(
                               (
-                                item.product.selectedVariant?.price ||
-                                item.product.price
+                                Number(
+                                  item.product.selectedVariant?.price ||
+                                  item.product.price
+                                ) +
+                                Number(
+                                  item.product.selectedOption?.price || 0
+                                )
                               ) * item.quantity
                             ).toLocaleString()} DZD
                           </span>
