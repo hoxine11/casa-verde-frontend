@@ -380,9 +380,10 @@ export default function App() {
         "https://casa-verde-production-1d5f.up.railway.app/api/orders"
       );
 
+
       const ordersData =
         await ordersRes.json();
-
+      console.log("ORDERS DATA =", ordersData);
       const mappedOrders = ordersData.map((order: any) => ({
         id: order.id,
         customerName: order.full_name,
