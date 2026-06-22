@@ -4,6 +4,7 @@
  */
 
 import { Plus, Eye } from 'lucide-react';
+import {ProductOption } from '../types';
 import { motion } from 'motion/react';
 import { Product } from '../types';
 import { useState } from 'react';
@@ -18,9 +19,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants?.[0] || null
   );
-  const [selectedOption, setSelectedOption] = useState(
-    null
-  );
+const [selectedOption, setSelectedOption] =
+  useState<ProductOption | null>(null);
   const finalPrice =
     Number(selectedVariant?.price || product.price) +
     Number(selectedOption?.price || 0);
