@@ -302,14 +302,14 @@ ${order.status === 'pending'
                       </div>
 
                       {item.variant_name && (
-                        <div className="mt-1 text-[11px] text-brand-gold-dark">
-                          Taille : {item.variant_name}
+                        <div className="mt-1 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-50 text-green-700 text-[11px] font-medium">
+                          📏 Taille : {item.variant_name}
                         </div>
                       )}
 
                       {item.option_name && (
-                        <div className="text-[11px] text-brand-gold-dark">
-                          Gratiné : {item.option_name}
+                        <div className="mt-1 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-medium">
+                          🧀 Option : {item.option_name}
                         </div>
                       )}
                     </li>
