@@ -4,7 +4,7 @@
  */
 
 import { Plus, Eye } from 'lucide-react';
-import {ProductOption } from '../types';
+import { CrepeFormula, CrepeStepItem, ProductOption } from '../types';
 import { motion } from 'motion/react';
 import { Product } from '../types';
 import { useState } from 'react';
@@ -19,11 +19,21 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants?.[0] || null
   );
-const [selectedOption, setSelectedOption] =
-  useState<ProductOption | null>(null);
+  const [selectedOption, setSelectedOption] =
+    useState<ProductOption | null>(null);
+  const [selectedCrepeSteps, setSelectedCrepeSteps] =
+    useState<CrepeStepItem[]>([]);
+
+  const [selectedFormula, setSelectedFormula] =
+    useState<CrepeFormula | null>(null);
   const finalPrice =
     Number(selectedVariant?.price || product.price) +
-    Number(selectedOption?.price || 0);
+    Number(selectedOption?.price || 0) +
+    selectedCrepeSteps.reduce(
+      (sum, step) => sum + Number(step.price),
+      0
+    ) +
+    Number(selectedFormula?.price || 0);
   console.log(product);
   return (
     <motion.div
@@ -100,36 +110,34 @@ const [selectedOption, setSelectedOption] =
 
             <div className="flex gap-2 flex-wrap">
 
-  <button
-    type="button"
-    onClick={() => setSelectedOption(null)}
-    className={`px-3 py-1 border rounded text-xs ${
-      selectedOption === null
-        ? "bg-brand-green text-white"
-        : "bg-white"
-    }`}
-  >
-    Aucune
-  </button>
+              <button
+                type="button"
+                onClick={() => setSelectedOption(null)}
+                className={`px-3 py-1 border rounded text-xs ${selectedOption === null
+                    ? "bg-brand-green text-white"
+                    : "bg-white"
+                  }`}
+              >
+                Aucune
+              </button>
 
-  {product.options.map((option) => (
-    <button
-      key={option.id}
-      type="button"
-      onClick={() => setSelectedOption(option)}
-      className={`px-3 py-1 border rounded text-xs ${
-        selectedOption?.id === option.id
-          ? "bg-brand-green text-white"
-          : "bg-white"
-      }`}
-    >
-      {option.name}
-      <span className="ml-1 text-[10px]">
-        +{option.price}
-      </span>
-    </button>
-  ))}
-</div>
+              {product.options.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setSelectedOption(option)}
+                  className={`px-3 py-1 border rounded text-xs ${selectedOption?.id === option.id
+                      ? "bg-brand-green text-white"
+                      : "bg-white"
+                    }`}
+                >
+                  {option.name}
+                  <span className="ml-1 text-[10px]">
+                    +{option.price}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
         {/* Bottom Actions Row */}
@@ -147,7 +155,10 @@ const [selectedOption, setSelectedOption] =
               onAddToCart({
                 ...product,
                 selectedVariant,
-                selectedOption
+                selectedOption,
+                selectedCrepeSteps,
+                selectedFormula,
+                price: finalPrice
               })
             } className="px-5 py-2 bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
           >
