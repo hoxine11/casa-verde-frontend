@@ -294,33 +294,6 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
               </div>
             )}
 
-            
-
-            {!selectedStep &&
-              product.crepeFormulas &&
-              product.crepeFormulas.length > 0 && (
-                <div className="flex gap-2 flex-wrap">
-
-                  {product.crepeFormulas.map(formula => (
-                    <button
-                      key={formula.id}
-                      type="button"
-                      onClick={() =>
-                        setSelectedFormula(formula)
-                      }
-                      className={`px-3 py-1 border rounded text-xs ${selectedFormula?.id === formula.id
-                        ? "bg-brand-green text-white"
-                        : "bg-white"
-                        }`}
-                    >
-                      {formula.name}
-                      {" "}
-                      +{formula.price}
-                    </button>
-                  ))}
-                </div>
-              )}
-
           </div>
         )}
         {/* Bottom Actions Row */}
