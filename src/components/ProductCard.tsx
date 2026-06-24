@@ -294,53 +294,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
               </div>
             )}
 
-            {selectedStep && (
-              <div className="flex gap-2 flex-wrap">
-
-                {product.crepeSteps
-                  ?.filter(
-                    step =>
-                      step.step_number === selectedStep
-                  )
-                  .map(step => {
-
-                    const isSelected =
-                      selectedCrepeSteps.some(
-                        s => s.id === step.id
-                      );
-
-                    return (
-                      <button
-                        key={step.id}
-                        type="button"
-                        onClick={() => {
-
-                          if (isSelected) {
-                            setSelectedCrepeSteps(prev =>
-                              prev.filter(
-                                s => s.id !== step.id
-                              )
-                            );
-                          } else {
-                            setSelectedCrepeSteps(prev => [
-                              ...prev,
-                              step
-                            ]);
-                          }
-                        }}
-                        className={`px-3 py-1 border rounded text-xs ${isSelected
-                          ? "bg-brand-green text-white"
-                          : "bg-white"
-                          }`}
-                      >
-                        {step.name}
-                        {" "}
-                        +{step.price}
-                      </button>
-                    );
-                  })}
-              </div>
-            )}
+            
 
             {!selectedStep &&
               product.crepeFormulas &&
