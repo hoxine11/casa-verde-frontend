@@ -26,6 +26,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
 
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
+  const [selectedStep, setSelectedStep] =
+    useState<number | null>(null);
   const finalPrice =
     Number(selectedVariant?.price || product.price) +
     Number(selectedOption?.price || 0) +
@@ -34,6 +36,13 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
       0
     ) +
     Number(selectedFormula?.price || 0);
+  const stepNumbers = [
+    ...new Set(
+      (product.crepeSteps || []).map(
+        step => step.step_number
+      )
+    )
+  ];
   console.log(product);
   return (
     <motion.div
@@ -114,8 +123,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
                 type="button"
                 onClick={() => setSelectedOption(null)}
                 className={`px-3 py-1 border rounded text-xs ${selectedOption === null
-                    ? "bg-brand-green text-white"
-                    : "bg-white"
+                  ? "bg-brand-green text-white"
+                  : "bg-white"
                   }`}
               >
                 Aucune
@@ -127,8 +136,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
                   type="button"
                   onClick={() => setSelectedOption(option)}
                   className={`px-3 py-1 border rounded text-xs ${selectedOption?.id === option.id
-                      ? "bg-brand-green text-white"
-                      : "bg-white"
+                    ? "bg-brand-green text-white"
+                    : "bg-white"
                     }`}
                 >
                   {option.name}
@@ -138,6 +147,136 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
                 </button>
               ))}
             </div>
+          </div>
+        )}
+        {product.category?.toLowerCase() === "crepe" && (
+          <div className="mb-4">
+
+            <p className="text-xs font-semibold mb-2">
+              Personnalisation
+            </p>
+
+            <div className="flex gap-2 flex-wrap mb-3">
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedStep(null);
+                  setSelectedFormula(null);
+                }}
+                className="px-3 py-1 border rounded text-xs"
+              >
+                Aucune
+              </button>
+
+              {stepNumbers.map(stepNumber => (
+                <button
+                  key={stepNumber}
+                  type="button"
+                  onClick={() => {
+                    setSelectedFormula(null);
+                    setSelectedStep(stepNumber);
+                  }}
+                  className={`px-3 py-1 border rounded text-xs ${selectedStep === stepNumber
+                      ? "bg-brand-green text-white"
+                      : "bg-white"
+                    }`}
+                >
+                  Étape {stepNumber}
+                </button>
+              ))}
+
+              {product.crepeFormulas &&
+                product.crepeFormulas.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedStep(null);
+                      setSelectedCrepeSteps([]);
+                    }}
+                    className={`px-3 py-1 border rounded text-xs ${selectedFormula
+                        ? "bg-brand-green text-white"
+                        : "bg-white"
+                      }`}
+                  >
+                    Formule
+                  </button>
+                )}
+            </div>
+
+            {selectedStep && (
+              <div className="flex gap-2 flex-wrap">
+
+                {product.crepeSteps
+                  ?.filter(
+                    step =>
+                      step.step_number === selectedStep
+                  )
+                  .map(step => {
+
+                    const isSelected =
+                      selectedCrepeSteps.some(
+                        s => s.id === step.id
+                      );
+
+                    return (
+                      <button
+                        key={step.id}
+                        type="button"
+                        onClick={() => {
+
+                          if (isSelected) {
+                            setSelectedCrepeSteps(prev =>
+                              prev.filter(
+                                s => s.id !== step.id
+                              )
+                            );
+                          } else {
+                            setSelectedCrepeSteps(prev => [
+                              ...prev,
+                              step
+                            ]);
+                          }
+                        }}
+                        className={`px-3 py-1 border rounded text-xs ${isSelected
+                            ? "bg-brand-green text-white"
+                            : "bg-white"
+                          }`}
+                      >
+                        {step.name}
+                        {" "}
+                        +{step.price}
+                      </button>
+                    );
+                  })}
+              </div>
+            )}
+
+            {!selectedStep &&
+              product.crepeFormulas &&
+              product.crepeFormulas.length > 0 && (
+                <div className="flex gap-2 flex-wrap">
+
+                  {product.crepeFormulas.map(formula => (
+                    <button
+                      key={formula.id}
+                      type="button"
+                      onClick={() =>
+                        setSelectedFormula(formula)
+                      }
+                      className={`px-3 py-1 border rounded text-xs ${selectedFormula?.id === formula.id
+                          ? "bg-brand-green text-white"
+                          : "bg-white"
+                        }`}
+                    >
+                      {formula.name}
+                      {" "}
+                      +{formula.price}
+                    </button>
+                  ))}
+                </div>
+              )}
+
           </div>
         )}
         {/* Bottom Actions Row */}
