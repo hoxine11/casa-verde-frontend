@@ -914,6 +914,48 @@ export default function AdminProducts({
                             ))}
                           </div>
                         )}
+                      {/* Étapes Crêpe */}
+                      {product.crepeSteps &&
+                        product.crepeSteps.length > 0 && (
+                          <div className="mt-3">
+                            <p className="text-[11px] font-bold text-brand-green mb-2">
+                              Étapes
+                            </p>
+
+                            <div className="flex flex-wrap gap-2">
+                              {product.crepeSteps.map((step) => (
+                                <span
+                                  key={step.id}
+                                  className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px]"
+                                >
+                                  E{step.step_number} • {step.name}
+                                  (+{step.price})
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      {/* Formules */}
+                      {product.crepeFormulas &&
+                        product.crepeFormulas.length > 0 && (
+                          <div className="mt-3">
+                            <p className="text-[11px] font-bold text-brand-green mb-2">
+                              Formules
+                            </p>
+
+                            <div className="flex flex-wrap gap-2">
+                              {product.crepeFormulas.map((formula) => (
+                                <span
+                                  key={formula.id}
+                                  className="px-2 py-1 rounded-full bg-amber-50 text-amber-700 text-[10px]"
+                                >
+                                  {formula.name}
+                                  (+{formula.price})
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                     </div>
 
                     {/* Quick toggle list actions Footer */}

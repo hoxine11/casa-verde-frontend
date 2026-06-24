@@ -23,7 +23,9 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
     useState<ProductOption | null>(null);
   const [selectedCrepeSteps, setSelectedCrepeSteps] =
     useState<CrepeStepItem[]>([]);
-
+  const [crepeMode, setCrepeMode] = useState<
+    "none" | "steps" | "formula"
+  >("none");
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
   const [selectedStep, setSelectedStep] =
@@ -161,48 +163,136 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedStep(null);
+                  setCrepeMode("none");
+                  setSelectedCrepeSteps([]);
                   setSelectedFormula(null);
                 }}
-                className="px-3 py-1 border rounded text-xs"
+                className={`px-3 py-1 border rounded text-xs ${crepeMode === "none"
+                  ? "bg-brand-green text-white"
+                  : "bg-white"
+                  }`}
               >
                 Aucune
               </button>
 
-              {stepNumbers.map(stepNumber => (
-                <button
-                  key={stepNumber}
-                  type="button"
-                  onClick={() => {
-                    setSelectedFormula(null);
-                    setSelectedStep(stepNumber);
-                  }}
-                  className={`px-3 py-1 border rounded text-xs ${selectedStep === stepNumber
-                      ? "bg-brand-green text-white"
-                      : "bg-white"
-                    }`}
-                >
-                  Étape {stepNumber}
-                </button>
-              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setCrepeMode("steps");
+                  setSelectedFormula(null);
+                }}
+                className={`px-3 py-1 border rounded text-xs ${crepeMode === "steps"
+                  ? "bg-brand-green text-white"
+                  : "bg-white"
+                  }`}
+              >
+                Étapes
+              </button>
 
-              {product.crepeFormulas &&
-                product.crepeFormulas.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedStep(null);
-                      setSelectedCrepeSteps([]);
-                    }}
-                    className={`px-3 py-1 border rounded text-xs ${selectedFormula
-                        ? "bg-brand-green text-white"
-                        : "bg-white"
-                      }`}
-                  >
-                    Formule
-                  </button>
-                )}
+              <button
+                type="button"
+                onClick={() => {
+                  setCrepeMode("formula");
+                  setSelectedCrepeSteps([]);
+                }}
+                className={`px-3 py-1 border rounded text-xs ${crepeMode === "formula"
+                  ? "bg-brand-green text-white"
+                  : "bg-white"
+                  }`}
+              >
+                Formule
+              </button>
+
             </div>
+            {crepeMode === "steps" && (
+              <div className="space-y-3">
+
+                {stepNumbers.map(stepNumber => (
+
+                  <div key={stepNumber}>
+
+                    <p className="text-xs font-semibold mb-2">
+                      Étape {stepNumber}
+                    </p>
+
+                    <div className="flex gap-2 flex-wrap">
+
+                      {product.crepeSteps
+                        ?.filter(
+                          step =>
+                            step.step_number === stepNumber
+                        )
+                        .map(step => {
+
+                          const isSelected =
+                            selectedCrepeSteps.some(
+                              s => s.id === step.id
+                            );
+
+                          return (
+                            <button
+                              key={step.id}
+                              type="button"
+                              onClick={() => {
+
+                                if (isSelected) {
+                                  setSelectedCrepeSteps(prev =>
+                                    prev.filter(
+                                      s => s.id !== step.id
+                                    )
+                                  );
+                                } else {
+                                  setSelectedCrepeSteps(prev => [
+                                    ...prev,
+                                    step
+                                  ]);
+                                }
+                              }}
+                              className={`px-3 py-1 border rounded text-xs ${isSelected
+                                ? "bg-brand-green text-white"
+                                : "bg-white"
+                                }`}
+                            >
+                              {step.name}
+                              {" "}
+                              +{step.price}
+                            </button>
+                          );
+                        })}
+
+                    </div>
+
+                  </div>
+
+                ))}
+
+              </div>
+            )}
+            {crepeMode === "formula" && (
+              <div className="flex gap-2 flex-wrap">
+
+                {product.crepeFormulas?.map(
+                  formula => (
+                    <button
+                      key={formula.id}
+                      type="button"
+                      onClick={() =>
+                        setSelectedFormula(formula)
+                      }
+                      className={`px-3 py-1 border rounded text-xs ${selectedFormula?.id === formula.id
+                          ? "bg-brand-green text-white"
+                          : "bg-white"
+                        }`}
+                    >
+                      {formula.name}
+                      {" "}
+                      +{formula.price}
+                    </button>
+                  )
+                )}
+
+              </div>
+            )}
 
             {selectedStep && (
               <div className="flex gap-2 flex-wrap">
@@ -239,8 +329,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
                           }
                         }}
                         className={`px-3 py-1 border rounded text-xs ${isSelected
-                            ? "bg-brand-green text-white"
-                            : "bg-white"
+                          ? "bg-brand-green text-white"
+                          : "bg-white"
                           }`}
                       >
                         {step.name}
@@ -265,8 +355,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
                         setSelectedFormula(formula)
                       }
                       className={`px-3 py-1 border rounded text-xs ${selectedFormula?.id === formula.id
-                          ? "bg-brand-green text-white"
-                          : "bg-white"
+                        ? "bg-brand-green text-white"
+                        : "bg-white"
                         }`}
                     >
                       {formula.name}
