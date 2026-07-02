@@ -59,7 +59,7 @@ export interface Order {
   comment?: string;
   items: OrderItem[];
   subtotal: number;
-  deliveryFee: number;
+  deliveryFee: string | number;
   total: number;
   date: string;
   status:

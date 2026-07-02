@@ -205,22 +205,30 @@ export default function App() {
           address: order.address,
           neighborhood: order.district,
           comment: order.comment || "",
+
           subtotal: Number(order.subtotal),
-          deliveryFee: Number(order.delivery_fee),
+
+          deliveryFee:
+            isNaN(Number(order.delivery_fee))
+              ? order.delivery_fee
+              : Number(order.delivery_fee),
+
           total: Number(order.total),
+
+          created_at: order.created_at,
           date: new Date(order.created_at).toLocaleString(),
+
           status: order.status.toLowerCase(),
 
           items: (order.items || []).map((item: any) => ({
             id: item.id,
             productId: item.productId,
             name: item.name,
-            price: item.price,
+            price: Number(item.price),
             quantity: item.quantity,
-
             variant_name: item.variant_name,
             option_name: item.option_name,
-          }))
+          })),
         }));
         console.log(mappedOrders);
         setOrders(mappedOrders);
