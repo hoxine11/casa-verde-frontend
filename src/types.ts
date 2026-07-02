@@ -73,7 +73,7 @@ export interface Settings {
   restaurantName: string;
   phone: string;
   address: string;
-  deliveryFee: number;
+  deliveryFee: string;
   facebook: string;
   instagram: string;
 }
