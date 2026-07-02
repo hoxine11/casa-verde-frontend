@@ -300,9 +300,8 @@ export default function App() {
   }, [cart]);
 
   const cartTotal = useMemo(() => {
-    if (cart.length === 0) return 0;
-    return cartSubtotal + settings.deliveryFee;
-  }, [cartSubtotal, settings.deliveryFee, cart.length]);
+    return cartSubtotal;
+  }, [cartSubtotal]);
 
   // Handle Cart operators
   const handleAddToCart = (product: Product) => {
@@ -358,7 +357,7 @@ export default function App() {
 
         subtotal: cartSubtotal,
         deliveryFee: settings.deliveryFee,
-        total: cartTotal,
+        total: cartSubtotal,
 
         items: cart.map((item) => ({
           productId: item.product.id,
@@ -805,7 +804,7 @@ export default function App() {
               </section>
 
               {/* Prestigieux Testimonials section */}
-              
+
 
               {/* Big CTA banner section */}
               <section className="py-20 bg-brand-green text-brand-ivory relative overflow-hidden select-none">
@@ -1043,11 +1042,15 @@ export default function App() {
                         </div>
                         <div className="flex justify-between text-brand-green/75 pb-4 border-b border-brand-green/5">
                           <span>Frais de livraison</span>
-                          <span className="font-bold">{settings.deliveryFee.toLocaleString()} DZD</span>
+                          <span className="font-bold">
+                            {settings.deliveryFee}
+                          </span>
                         </div>
                         <div className="flex justify-between font-serif text-lg font-bold text-brand-green-dark pt-2">
                           <span>Total</span>
-                          <span className="text-brand-gold-dark">{cartTotal.toLocaleString()} DZD</span>
+                          <span className="text-brand-gold-dark">
+                            À confirmer
+                          </span>
                         </div>
                       </div>
 
@@ -1266,7 +1269,7 @@ export default function App() {
                 </div>
 
                 {/* Tracking Milestones timeline widget */}
-                
+
 
                 <div className="pt-4">
                   <button
