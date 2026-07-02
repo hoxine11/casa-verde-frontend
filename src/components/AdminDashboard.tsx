@@ -26,7 +26,7 @@ export default function AdminDashboard({ orders, onViewOrder }: AdminDashboardPr
     .filter((o) => {
       if (o.status !== "delivered") return false;
 
-      const orderDate = new Date(o.date);
+     const orderDate = new Date(o.created_at);
 
       return (
         orderDate.getDate() === today.getDate() &&
@@ -40,7 +40,7 @@ export default function AdminDashboard({ orders, onViewOrder }: AdminDashboardPr
     .filter((o) => {
       if (o.status === "cancelled") return false;
 
-      const orderDate = new Date(o.date);
+     const orderDate = new Date(o.created_at);
 
       return (
         orderDate.getMonth() === today.getMonth() &&

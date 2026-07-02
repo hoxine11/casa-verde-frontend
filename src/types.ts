@@ -67,6 +67,7 @@ export interface Order {
   | 'confirmed'
   | 'delivered'
   | 'cancelled';
+  created_at: string;
 }
 
 export interface Settings {
