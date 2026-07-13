@@ -21,6 +21,8 @@ export interface Product {
 
   selectedVariant?: ProductVariant | null;
   selectedOption?: ProductOption | null;
+  selectedOptions?: ProductOption[]; // للسندويتش فقط
+
   selectedCrepeSteps?: CrepeStepItem[];
 selectedFormula?: CrepeFormula | null;
 }
