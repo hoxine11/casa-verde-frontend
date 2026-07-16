@@ -314,13 +314,8 @@ export default function App() {
   }, [cart]);
 
   const cartTotal = useMemo(() => {
-    const delivery =
-      orderType === "delivery"
-        ? Number(settings.deliveryFee || 0)
-        : 0;
-
-    return cartSubtotal + delivery;
-  }, [cartSubtotal, settings.deliveryFee, orderType]);
+    return cartSubtotal;
+  }, [cartSubtotal]);
 
   // Handle Cart operators
   const handleAddToCart = (product: Product) => {
@@ -388,17 +383,29 @@ export default function App() {
       console.log("CART =", cart);
       const payload = {
         customerName: checkoutName,
-        phone: checkoutPhone,
-        address: checkoutAddress,
-        comment: checkoutComment,
+
+        phone:
+          orderType === "delivery"
+            ? checkoutPhone
+            : "",
+
+        address:
+          orderType === "delivery"
+            ? checkoutAddress
+            : "",
+
+        comment:
+          orderType === "delivery"
+            ? checkoutComment
+            : "",
 
         subtotal: cartSubtotal,
-        deliveryFee:
-          orderType === "delivery"
-            ? Number(settings.deliveryFee || 0)
-            : 0,
 
-        total: cartTotal,
+        // L'admin fixera les frais de livraison
+        deliveryFee: 0,
+
+        // Le total est uniquement le sous-total
+        total: cartSubtotal,
 
         orderType,
 
@@ -409,8 +416,7 @@ export default function App() {
             Number(
               item.product.selectedVariant?.price ||
               item.product.price
-            )
-            +
+            ) +
             (
               item.product.selectedOptions?.reduce(
                 (sum, option) => sum + Number(option.price),
@@ -425,9 +431,17 @@ export default function App() {
 
           optionName:
             item.product.selectedOptions
-              ?.map(o => o.name)
+              ?.map((o) => o.name)
               .join(", ") || null,
-        }))
+
+          crepeSteps:
+            item.product.selectedCrepeSteps
+              ?.map((step) => step.name)
+              .join(", ") || null,
+
+          formulaName:
+            item.product.selectedFormula?.name || null,
+        })),
       };
       console.log(
         "PAYLOAD =",
@@ -1164,28 +1178,60 @@ export default function App() {
                       Type de commande
                     </h3>
 
-                    <div className="flex rounded-xl overflow-hidden border border-brand-green/20">
+                    <div className="grid grid-cols-2 gap-4 w-full">
+
+                      {/* À table */}
 
                       <button
                         type="button"
                         onClick={() => setOrderType("table")}
-                        className={`px-5 py-2 text-xs font-semibold transition ${orderType === "table"
-                          ? "bg-brand-green text-white"
-                          : "bg-white text-brand-green"
+                        className={`overflow-hidden rounded-2xl border-2 transition-all duration-300 ${orderType === "table"
+                            ? "border-brand-gold shadow-xl scale-105"
+                            : "border-brand-green/10 hover:border-brand-green"
                           }`}
                       >
-                        🍽️ À table
+                        <img
+                          src="/images/table.png"
+                          alt="À table"
+                          className="w-full h-40 object-cover"
+                        />
+
+                        <div className="py-3 bg-white">
+                          <h3 className="font-serif text-lg text-brand-green">
+                            À table
+                          </h3>
+
+                          <p className="text-xs text-brand-green/70">
+                            Commander au restaurant
+                          </p>
+                        </div>
                       </button>
+
+                      {/* Livraison */}
 
                       <button
                         type="button"
                         onClick={() => setOrderType("delivery")}
-                        className={`px-5 py-2 text-xs font-semibold transition ${orderType === "delivery"
-                          ? "bg-brand-green text-white"
-                          : "bg-white text-brand-green"
+                        className={`overflow-hidden rounded-2xl border-2 transition-all duration-300 ${orderType === "delivery"
+                            ? "border-brand-gold shadow-xl scale-105"
+                            : "border-brand-green/10 hover:border-brand-green"
                           }`}
                       >
-                        🛵 Livraison
+                        <img
+                          src="/images/livraison.png"
+                          alt="Livraison"
+                          className="w-full h-40 object-cover"
+                        />
+
+                        <div className="py-3 bg-white">
+                          <h3 className="font-serif text-lg text-brand-green">
+                            Livraison
+                          </h3>
+
+                          <p className="text-xs text-brand-green/70">
+                            Livraison à domicile
+                          </p>
+                        </div>
                       </button>
 
                     </div>
