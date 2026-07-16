@@ -172,6 +172,13 @@ export default function AdminProducts({
   };
   const [crepeSteps, setCrepeSteps] = useState<any[]>([]);
   const [crepeFormulas, setCrepeFormulas] = useState<any[]>([]);
+  const cat = category.toLowerCase();
+
+  const isCrepeLike =
+    cat === "crepe" ||
+    cat === "crêpe" ||
+    cat === "gaufre" ||
+    cat === "mini pancakes";
   const handleSave = async (
     e: React.FormEvent
   ) => {
@@ -462,7 +469,7 @@ export default function AdminProducts({
                 </button>
               </div>
             )}
-            {category.toLowerCase() !== "crepe" && (
+            {!isCrepeLike && (
               <div className="space-y-3">
                 <label className="font-bold text-brand-green">
                   Options
@@ -533,7 +540,7 @@ export default function AdminProducts({
                 </button>
               </div>
             )}
-            {category.toLowerCase() === "crepe" && (
+            {isCrepeLike && (
               <div className="space-y-4 border-t pt-4">
 
                 <h3 className="font-bold text-brand-green">
@@ -611,7 +618,7 @@ export default function AdminProducts({
 
               </div>
             )}
-            {category.toLowerCase() === "crepe" && (
+            {isCrepeLike && (
               <div className="space-y-4">
 
                 <h3 className="font-bold text-brand-green">
