@@ -265,6 +265,9 @@ export default function App() {
   const [checkoutPhone, setCheckoutPhone] = useState('');
   const [checkoutAddress, setCheckoutAddress] = useState('');
   const [checkoutComment, setCheckoutComment] = useState('');
+  const [orderType, setOrderType] = useState<"delivery" | "table">(
+    "delivery"
+  );
 
   // Succeeded order placeholder for tracking
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
@@ -311,8 +314,13 @@ export default function App() {
   }, [cart]);
 
   const cartTotal = useMemo(() => {
-    return cartSubtotal;
-  }, [cartSubtotal]);
+    const delivery =
+      orderType === "delivery"
+        ? Number(settings.deliveryFee || 0)
+        : 0;
+
+    return cartSubtotal + delivery;
+  }, [cartSubtotal, settings.deliveryFee, orderType]);
 
   // Handle Cart operators
   const handleAddToCart = (product: Product) => {
@@ -385,8 +393,14 @@ export default function App() {
         comment: checkoutComment,
 
         subtotal: cartSubtotal,
-        deliveryFee: settings.deliveryFee,
-        total: cartSubtotal,
+        deliveryFee:
+          orderType === "delivery"
+            ? Number(settings.deliveryFee || 0)
+            : 0,
+
+        total: cartTotal,
+
+        orderType,
 
         items: cart.map((item) => ({
           productId: item.product.id,
@@ -1083,12 +1097,14 @@ export default function App() {
                           <span>Sous-total</span>
                           <span className="font-bold">{cartSubtotal.toLocaleString()} DZD</span>
                         </div>
-                        <div className="flex justify-between text-brand-green/75 pb-4 border-b border-brand-green/5">
-                          <span>Frais de livraison</span>
-                          <span className="font-bold">
-                            {settings.deliveryFee}
-                          </span>
-                        </div>
+                        {orderType === "delivery" && (
+                          <div className="flex justify-between text-brand-green/75 pb-4 border-b border-brand-green/5">
+                            <span>Frais de livraison</span>
+                            <span>
+                              {settings.deliveryFee} DZD
+                            </span>
+                          </div>
+                        )}
                         <div className="flex justify-between font-serif text-lg font-bold text-brand-green-dark pt-2">
                           <span>Total</span>
                           <span className="text-brand-gold-dark">
@@ -1142,9 +1158,43 @@ export default function App() {
 
                 {/* Left Columns (Span 2): Customer submission form */}
                 <div className="lg:col-span-2 bg-brand-green/5 border border-brand-green/10 rounded-3xl p-8 space-y-6">
-                  <h3 className="font-serif text-lg font-bold text-brand-green pb-2 border-b border-brand-green/10 mb-2">
-                    Vos informations de livraison
-                  </h3>
+                  <div className="flex items-center justify-between border-b border-brand-green/10 pb-4 mb-6">
+
+                    <h3 className="font-serif text-lg font-bold text-brand-green">
+                      Type de commande
+                    </h3>
+
+                    <div className="flex rounded-xl overflow-hidden border border-brand-green/20">
+
+                      <button
+                        type="button"
+                        onClick={() => setOrderType("table")}
+                        className={`px-5 py-2 text-xs font-semibold transition ${orderType === "table"
+                          ? "bg-brand-green text-white"
+                          : "bg-white text-brand-green"
+                          }`}
+                      >
+                        🍽️ À table
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setOrderType("delivery")}
+                        className={`px-5 py-2 text-xs font-semibold transition ${orderType === "delivery"
+                          ? "bg-brand-green text-white"
+                          : "bg-white text-brand-green"
+                          }`}
+                      >
+                        🛵 Livraison
+                      </button>
+
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-brand-green pb-2 border-b border-brand-green/10 mb-2">
+                      {orderType === "delivery"
+                        ? "Vos informations de livraison"
+                        : "Vos informations"}
+                    </h3>
+                  </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 font-sans text-xs">
 
@@ -1162,51 +1212,54 @@ export default function App() {
                     </div>
 
                     {/* Tel */}
-                    <div className="space-y-2">
-                      <label className="text-brand-green font-semibold block">Téléphone *</label>
-                      <input
-                        type="tel"
-                        required
-                        value={checkoutPhone}
-                        onChange={(e) => setCheckoutPhone(e.target.value)}
+                    {orderType === "delivery" && (
+                      <div className="space-y-2">
+                        <label className="text-brand-green font-semibold block">Téléphone *</label>
+                        <input
+                          type="tel"
+                          required
+                          value={checkoutPhone}
+                          onChange={(e) => setCheckoutPhone(e.target.value)}
 
-                        className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold"
-                      />
-                    </div>
-
+                          className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold focus:border-brand-gold"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 gap-5 font-sans text-xs">
 
                     {/* Full Street Address */}
-                    <div className="sm:col-span-2 space-y-2">
-                      <label className="text-brand-green font-semibold block">Adresse complète *</label>
-                      <input
-                        type="text"
-                        required
-                        value={checkoutAddress}
-                        onChange={(e) => setCheckoutAddress(e.target.value)}
+                    {orderType === "delivery" && (
+                      <div className="sm:col-span-2 space-y-2">
+                        <label className="text-brand-green font-semibold block">Adresse complète *</label>
+                        <input
+                          type="text"
+                          required
+                          value={checkoutAddress}
+                          onChange={(e) => setCheckoutAddress(e.target.value)}
 
-                        className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold"
-                      />
-                    </div>
-
+                          className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold"
+                        />
+                      </div>
+                    )}
                     {/* Secteur / Quartier Dropdown select */}
 
 
                   </div>
 
                   {/* Comment */}
-                  <div className="space-y-2 font-sans text-xs">
-                    <label className="text-brand-green font-semibold block">Commentaire ou Consigne de livraison</label>
-                    <textarea
-                      value={checkoutComment}
-                      onChange={(e) => setCheckoutComment(e.target.value)}
-                      rows={3}
-                      className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold"
-                    />
-                  </div>
-
+                  {orderType === "delivery" && (
+                    <div className="space-y-2 font-sans text-xs">
+                      <label className="text-brand-green font-semibold block">Commentaire ou Consigne de livraison</label>
+                      <textarea
+                        value={checkoutComment}
+                        onChange={(e) => setCheckoutComment(e.target.value)}
+                        rows={3}
+                        className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Right Column: Checkout summary review list */}
@@ -1249,10 +1302,12 @@ export default function App() {
                         <span>Sous-total</span>
                         <span>{cartSubtotal.toLocaleString()} DZD</span>
                       </div>
-                      <div className="flex justify-between text-brand-green/75 pb-4 border-b border-brand-green/5">
-                        <span>Frais de livraison</span>
-                        <span>{settings.deliveryFee.toLocaleString()} DZD</span>
-                      </div>
+                      {orderType === "delivery" && (
+                        <div className="flex justify-between text-brand-green/75 pb-4 border-b border-brand-green/5">
+                          <span>Frais de livraison</span>
+                          <span>{settings.deliveryFee} DZD</span>
+                        </div>
+                      )}
                       <div className="flex justify-between font-serif text-lg font-bold text-brand-green-dark pt-2">
                         <span>Total à payer</span>
                         <span className="text-brand-gold-dark">{cartTotal.toLocaleString()} DZD</span>
