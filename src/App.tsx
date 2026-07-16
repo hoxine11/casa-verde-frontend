@@ -1172,37 +1172,43 @@ export default function App() {
 
                 {/* Left Columns (Span 2): Customer submission form */}
                 <div className="lg:col-span-2 bg-brand-green/5 border border-brand-green/10 rounded-3xl p-8 space-y-6">
-                  <div className="flex items-center justify-between border-b border-brand-green/10 pb-4 mb-6">
+                  <div className="space-y-8 border-b border-brand-green/10 pb-8 mb-8">
 
-                    <h3 className="font-serif text-lg font-bold text-brand-green">
-                      Type de commande
-                    </h3>
+                    <div className="text-center">
+                      <h2 className="font-serif text-3xl font-bold text-brand-green">
+                        Type de commande
+                      </h2>
 
-                    <div className="grid grid-cols-2 gap-4 w-full">
+                      <p className="text-sm text-brand-green/60 mt-2">
+                        Choisissez comment vous souhaitez recevoir votre commande
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
 
                       {/* À table */}
 
                       <button
                         type="button"
                         onClick={() => setOrderType("table")}
-                        className={`overflow-hidden rounded-2xl border-2 transition-all duration-300 ${orderType === "table"
-                            ? "border-brand-gold shadow-xl scale-105"
-                            : "border-brand-green/10 hover:border-brand-green"
+                        className={`overflow-hidden rounded-3xl border-2 transition-all duration-300 ${orderType === "table"
+                          ? "border-brand-gold shadow-2xl scale-[1.03]"
+                          : "border-brand-green/10 hover:border-brand-green"
                           }`}
                       >
                         <img
                           src="/images/table.png"
                           alt="À table"
-                          className="w-full h-40 object-cover"
+                          className="w-full h-56 object-cover"
                         />
 
-                        <div className="py-3 bg-white">
-                          <h3 className="font-serif text-lg text-brand-green">
+                        <div className="bg-white py-5">
+                          <h3 className="font-serif text-2xl text-brand-green">
                             À table
                           </h3>
 
-                          <p className="text-xs text-brand-green/70">
-                            Commander au restaurant
+                          <p className="text-sm text-brand-green/70 mt-1">
+                            Commander directement au restaurant
                           </p>
                         </div>
                       </button>
@@ -1212,36 +1218,36 @@ export default function App() {
                       <button
                         type="button"
                         onClick={() => setOrderType("delivery")}
-                        className={`overflow-hidden rounded-2xl border-2 transition-all duration-300 ${orderType === "delivery"
-                            ? "border-brand-gold shadow-xl scale-105"
-                            : "border-brand-green/10 hover:border-brand-green"
+                        className={`overflow-hidden rounded-3xl border-2 transition-all duration-300 ${orderType === "delivery"
+                          ? "border-brand-gold shadow-2xl scale-[1.03]"
+                          : "border-brand-green/10 hover:border-brand-green"
                           }`}
                       >
                         <img
                           src="/images/livraison.png"
                           alt="Livraison"
-                          className="w-full h-40 object-cover"
+                          className="w-full h-56 object-cover"
                         />
 
-                        <div className="py-3 bg-white">
-                          <h3 className="font-serif text-lg text-brand-green">
+                        <div className="bg-white py-5">
+                          <h3 className="font-serif text-2xl text-brand-green">
                             Livraison
                           </h3>
 
-                          <p className="text-xs text-brand-green/70">
+                          <p className="text-sm text-brand-green/70 mt-1">
                             Livraison à domicile
                           </p>
                         </div>
                       </button>
 
                     </div>
-                    <h3 className="font-serif text-lg font-bold text-brand-green pb-2 border-b border-brand-green/10 mb-2">
-                      {orderType === "delivery"
-                        ? "Vos informations de livraison"
-                        : "Vos informations"}
-                    </h3>
-                  </div>
 
+                  </div>
+                  <h3 className="font-serif text-2xl font-bold text-brand-green pb-3 border-b border-brand-green/10 mb-6">
+                    {orderType === "delivery"
+                      ? "Vos informations de livraison"
+                      : "Vos informations"}
+                  </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 font-sans text-xs">
 
                     {/* Full Name */}
