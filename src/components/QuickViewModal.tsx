@@ -39,6 +39,9 @@ export default function QuickViewModal({
 
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
+  const [customizationMode, setCustomizationMode] = useState<
+    "none" | "steps" | "formula"
+  >("none");
   const category = product?.category?.toLowerCase() || "";
 
   const isTacos = category === "tacos";
@@ -48,8 +51,19 @@ export default function QuickViewModal({
     category === "crêpe" ||
     category === "gaufre" ||
     category === "mini pancakes";
+  const stepNumbers = [
+    ...new Set(
+      (product?.crepeSteps || []).map((step) => step.step_number)
+    )
+  ];
   useEffect(() => {
     if (!product) return;
+
+    setSelectedVariant(product.variants?.[0] || null);
+    setSelectedOptions([]);
+    setSelectedCrepeSteps([]);
+    setSelectedFormula(null);
+    setCustomizationMode("none");
 
     fetch(
       `https://casa-verde-production-1d5f.up.railway.app/api/product-variants/${product.id}`
@@ -238,6 +252,125 @@ export default function QuickViewModal({
                   </div>
                 )
               }
+              {isCrepe && (
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <h4 className="font-semibold text-brand-green mb-3">
+                      Personnalisation
+                    </h4>
+
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCustomizationMode("none");
+                          setSelectedCrepeSteps([]);
+                          setSelectedFormula(null);
+                        }}
+                        className={`px-3 py-1 border rounded text-xs ${customizationMode === "none"
+                          ? "bg-brand-green text-white"
+                          : "bg-white"
+                          }`}
+                      >
+                        Aucune
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCustomizationMode("steps");
+                          setSelectedFormula(null);
+                        }}
+                        className={`px-3 py-1 border rounded text-xs ${customizationMode === "steps"
+                          ? "bg-brand-green text-white"
+                          : "bg-white"
+                          }`}
+                      >
+                        Étapes
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCustomizationMode("formula");
+                          setSelectedCrepeSteps([]);
+                        }}
+                        className={`px-3 py-1 border rounded text-xs ${customizationMode === "formula"
+                          ? "bg-brand-green text-white"
+                          : "bg-white"
+                          }`}
+                      >
+                        Formule
+                      </button>
+                    </div>
+                  </div>
+
+                  {customizationMode === "steps" && stepNumbers.map((stepNumber) => (
+                    <div key={stepNumber}>
+                      <h4 className="font-semibold text-brand-green mb-2">
+                        Étape {stepNumber}
+                      </h4>
+
+                      <div className="space-y-2">
+                        {product.crepeSteps
+                          ?.filter((step) => step.step_number === stepNumber)
+                          .map((step) => {
+                            const isSelected = selectedCrepeSteps.some(
+                              (selectedStep) => selectedStep.id === step.id
+                            );
+
+                            return (
+                              <label
+                                key={step.id}
+                                className="flex items-center justify-between border p-3 cursor-pointer"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => {
+                                      setSelectedCrepeSteps((currentSteps) =>
+                                        isSelected
+                                          ? currentSteps.filter(
+                                            (selectedStep) => selectedStep.id !== step.id
+                                          )
+                                          : [...currentSteps, step]
+                                      );
+                                    }}
+                                  />
+                                  <span>{step.name}</span>
+                                </div>
+                                <span>+{step.price} DA</span>
+                              </label>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  ))}
+
+                  {customizationMode === "formula" && (
+                    <div className="space-y-2">
+                      {product.crepeFormulas?.map((formula) => (
+                        <label
+                          key={formula.id}
+                          className="flex items-center justify-between border p-3 cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="radio"
+                              name="formula"
+                              checked={selectedFormula?.id === formula.id}
+                              onChange={() => setSelectedFormula(formula)}
+                            />
+                            <span>{formula.name}</span>
+                          </div>
+                          <span>+{formula.price} DA</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               {/* Price and Cart Action */}
               <div className="flex items-center justify-between pt-4 border-t border-brand-green/10">
                 <div>
