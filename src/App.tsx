@@ -299,7 +299,10 @@ export default function App() {
             item.product.price
           ) +
           Number(
-            item.product.selectedOption?.price || 0
+            item.product.selectedOptions?.reduce(
+              (sum, option) => sum + Number(option.price),
+              0
+            ) || 0
           )
         ) *
         item.quantity,
@@ -314,18 +317,36 @@ export default function App() {
   // Handle Cart operators
   const handleAddToCart = (product: Product) => {
     console.log("ADDING PRODUCT =", product);
-    console.log("SELECTED OPTION =", product.selectedOption);
+
     setCart((prev) => {
       const exists = prev.find(
         (item) =>
           item.product.id === product.id &&
           item.product.selectedVariant?.id === product.selectedVariant?.id &&
-          item.product.selectedOption?.id === product.selectedOption?.id
-      );
+          JSON.stringify(item.product.selectedOptions) ===
+          JSON.stringify(product.selectedOptions));
       if (exists) {
-        return prev.map((item) =>
-          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
+        return prev.map((item) => {
+          const sameProduct =
+            item.product.id === product.id;
+
+          const sameVariant =
+            item.product.selectedVariant?.id ===
+            product.selectedVariant?.id;
+
+          const sameOptions =
+            JSON.stringify(item.product.selectedOptions) ===
+            JSON.stringify(product.selectedOptions);
+
+          if (sameProduct && sameVariant && sameOptions) {
+            return {
+              ...item,
+              quantity: item.quantity + 1
+            };
+          }
+
+          return item;
+        });
       }
       return [...prev, { product, quantity: 1 }];
     });
@@ -374,9 +395,13 @@ export default function App() {
             Number(
               item.product.selectedVariant?.price ||
               item.product.price
-            ) +
-            Number(
-              item.product.selectedOption?.price || 0
+            )
+            +
+            (
+              item.product.selectedOptions?.reduce(
+                (sum, option) => sum + Number(option.price),
+                0
+              ) || 0
             ),
 
           quantity: item.quantity,
@@ -385,7 +410,9 @@ export default function App() {
             item.product.selectedVariant?.name || null,
 
           optionName:
-            item.product.selectedOption?.name || null,
+            item.product.selectedOptions
+              ?.map(o => o.name)
+              .join(", ") || null,
         }))
       };
       console.log(
@@ -985,11 +1012,16 @@ export default function App() {
 
                             )}
 
-                            {item.product.selectedOption && (
-                              <p className="text-xs text-gray-500">
-                                Option : {item.product.selectedOption.name}
-                              </p>
-                            )}
+                            {item.product.selectedOptions &&
+                              item.product.selectedOptions.length > 0 && (
+                                <p className="text-xs text-gray-500">
+                                  Options :
+                                  {" "}
+                                  {item.product.selectedOptions
+                                    .map(o => o.name)
+                                    .join(", ")}
+                                </p>
+                              )}
                             <p className="font-serif text-sm font-semibold text-brand-green/90 mt-1">
                               {(
                                 Number(
@@ -997,7 +1029,10 @@ export default function App() {
                                   item.product.price
                                 ) +
                                 Number(
-                                  item.product.selectedOption?.price || 0
+                                  item.product.selectedOptions?.reduce(
+                                    (sum, option) => sum + Number(option.price),
+                                    0
+                                  ) || 0
                                 )
                               ).toLocaleString()} DZD
                             </p>
@@ -1196,7 +1231,10 @@ export default function App() {
                                   item.product.price
                                 ) +
                                 Number(
-                                  item.product.selectedOption?.price || 0
+                                  item.product.selectedOptions?.reduce(
+                                    (sum, option) => sum + Number(option.price),
+                                    0
+                                  ) || 0
                                 )
                               ) * item.quantity
                             ).toLocaleString()} DZD

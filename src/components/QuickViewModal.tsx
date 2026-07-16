@@ -32,13 +32,22 @@ export default function QuickViewModal({
   const [selectedVariant, setSelectedVariant] =
     useState<ProductVariant | null>(null);
 
-  const [selectedOption, setSelectedOption] =
-    useState<ProductOption | null>(null);
+  const [selectedOptions, setSelectedOptions] =
+    useState<ProductOption[]>([]);
   const [selectedCrepeSteps, setSelectedCrepeSteps] =
     useState<CrepeStepItem[]>([]);
 
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
+  const category = product?.category?.toLowerCase() || "";
+
+  const isTacos = category === "tacos";
+  const isSandwich = category === "sandwitch" || category === "sandwich";
+  const isCrepe =
+    category === "crepe" ||
+    category === "crêpe" ||
+    category === "gaufre" ||
+    category === "mini pancakes";
   useEffect(() => {
     if (!product) return;
 
@@ -60,7 +69,15 @@ export default function QuickViewModal({
       })
       .catch(console.error);
 
-  }, [product]);
+  },
+
+    [product]);
+  const displayedOptions = isTacos
+    ? options.filter(
+      (o) =>
+        o.option_group === (selectedVariant?.name || "M")
+    )
+    : options;
 
   if (!product) return null;
 
@@ -168,17 +185,41 @@ export default function QuickViewModal({
                       </h4>
 
                       <div className="space-y-2">
-                        {options.map((option) => (
+                        {displayedOptions.map((option) => (
                           <label
                             key={option.id}
                             className="flex items-center justify-between border p-3 cursor-pointer"
                           >
                             <div className="flex items-center gap-2">
                               <input
-                                type="radio"
-                                name="gratine"
-                                checked={selectedOption?.id === option.id}
-                                onChange={() => setSelectedOption(option)}
+                                type="checkbox"
+                                checked={selectedOptions.some(
+                                  (o) => o.id === option.id
+                                )}
+                                onChange={() => {
+
+                                  if (
+                                    selectedOptions.some(
+                                      (o) => o.id === option.id
+                                    )
+                                  ) {
+
+                                    setSelectedOptions(
+                                      selectedOptions.filter(
+                                        (o) => o.id !== option.id
+                                      )
+                                    );
+
+                                  } else {
+
+                                    setSelectedOptions([
+                                      ...selectedOptions,
+                                      option
+                                    ]);
+
+                                  }
+
+                                }}
                               />
 
                               <span>
@@ -205,7 +246,10 @@ export default function QuickViewModal({
                       (
                         Number(selectedVariant?.price || product.price)
                         +
-                        Number(selectedOption?.price || 0)
+                        selectedOptions.reduce(
+                          (sum, option) => sum + Number(option.price),
+                          0
+                        )
                         +
                         selectedCrepeSteps.reduce(
                           (sum, step) => sum + Number(step.price),
@@ -224,14 +268,17 @@ export default function QuickViewModal({
                     onAddToCart({
                       ...product,
                       selectedVariant,
-                      selectedOption,
+                      selectedOptions,
                       selectedCrepeSteps,
                       selectedFormula,
 
                       price:
                         Number(selectedVariant?.price || product.price)
                         +
-                        Number(selectedOption?.price || 0)
+                        selectedOptions.reduce(
+                          (sum, option) => sum + Number(option.price),
+                          0
+                        )
                         +
                         selectedCrepeSteps.reduce(
                           (sum, step) => sum + Number(step.price),

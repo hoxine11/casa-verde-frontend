@@ -34,6 +34,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
     category === "mini pancakes";
   const isSandwich =
     category === "sandwitch";
+  const isTacos =
+    category === "tacos";
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
   const [selectedOptions, setSelectedOptions] =
@@ -62,6 +64,13 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
       )
     )
   ];
+  const displayedOptions = isTacos
+    ? (product.options || []).filter(
+      option =>
+        option.option_group ===
+        (selectedVariant?.name || "M")
+    )
+    : product.options || [];
   console.log(product);
   return (
     <motion.div
@@ -161,7 +170,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
                 Aucune
               </button>
 
-              {product.options.map((option) => {
+              {displayedOptions.map((option) => {
 
                 const isSelected = isSandwich
                   ? selectedOptions.some(o => o.id === option.id)
@@ -376,18 +385,13 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
               onAddToCart({
                 ...product,
                 selectedVariant,
-                selectedOption: isSandwich
-                  ? null
-                  : selectedOption,
-
-                selectedOptions: isSandwich
-                  ? selectedOptions
-                  : [],
+                selectedOptions,
                 selectedCrepeSteps,
                 selectedFormula,
-                price: finalPrice
+                price: finalPrice,
               })
-            } className="px-5 py-2 bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
+            }
+            className="px-5 py-2 bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
           >
             Ajouter
           </motion.button>

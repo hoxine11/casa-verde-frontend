@@ -38,10 +38,15 @@ export default function AdminProducts({
   ]);
 
   const [options, setOptions] = useState<
-    { name: string; price: number }[]
+    {
+      name: string;
+      option_group: string;
+      price: number;
+    }[]
   >([
     {
       name: "",
+      option_group: "M",
       price: 0
     }
   ]);
@@ -144,7 +149,13 @@ export default function AdminProducts({
     setImage(product.image_url);
     setIsActive(product.is_active);
     setVariants(product.variants || []);
-    setOptions(product.options || []);
+    setOptions(
+      (product.options || []).map((o: any) => ({
+        name: o.name,
+        option_group: o.option_group || "M",
+        price: Number(o.price)
+      }))
+    );
     setCrepeSteps(
       product.crepeSteps || []
     );
@@ -451,59 +462,77 @@ export default function AdminProducts({
                 </button>
               </div>
             )}
-            {!["tacos", "crepe"].includes(
-              category.toLowerCase()
-            ) && (
-                <div className="space-y-3">
-                  <label className="font-bold text-brand-green">
-                    Options
-                  </label>
+            {category.toLowerCase() !== "crepe" && (
+              <div className="space-y-3">
+                <label className="font-bold text-brand-green">
+                  Options
+                </label>
 
-                  {options.map((option, index) => (
-                    <div
-                      key={index}
-                      className="flex gap-3"
-                    >
-                      <input
-                        type="text"
-                        placeholder="Camembert"
-                        value={option.name}
-                        onChange={(e) => {
-                          const copy = [...options];
-                          copy[index].name = e.target.value;
-                          setOptions(copy);
-                        }}
-                        className="border rounded p-2 flex-1"
-                      />
-
-                      <input
-                        type="number"
-                        placeholder="100"
-                        value={option.price}
-                        onChange={(e) => {
-                          const copy = [...options];
-                          copy[index].price = Number(e.target.value);
-                          setOptions(copy);
-                        }}
-                        className="border rounded p-2 flex-1"
-                      />
-                    </div>
-                  ))}
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setOptions([
-                        ...options,
-                        { name: "", price: 0 }
-                      ])
-                    }
-                    className="text-sm text-blue-600"
+                {options.map((option, index) => (
+                  <div
+                    key={index}
+                    className="flex gap-3 items-center"
                   >
-                    + Ajouter Option
-                  </button>
-                </div>
-              )}
+                    {/* Nom */}
+                    <input
+                      type="text"
+                      placeholder="Supplément"
+                      value={option.name}
+                      onChange={(e) => {
+                        const copy = [...options];
+                        copy[index].name = e.target.value;
+                        setOptions(copy);
+                      }}
+                      className="border rounded p-2 flex-1"
+                    />
+
+                    {/* Taille */}
+                    <select
+                      value={option.option_group}
+                      onChange={(e) => {
+                        const copy = [...options];
+                        copy[index].option_group = e.target.value;
+                        setOptions(copy);
+                      }}
+                      className="border rounded p-2 w-24"
+                    >
+                      <option value="M">M</option>
+                      <option value="L">L</option>
+                    </select>
+
+                    {/* Prix */}
+                    <input
+                      type="number"
+                      placeholder="100"
+                      value={option.price}
+                      onChange={(e) => {
+                        const copy = [...options];
+                        copy[index].price = Number(e.target.value);
+                        setOptions(copy);
+                      }}
+                      className="border rounded p-2 w-28"
+                    />
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOptions([
+                      ...options,
+                      {
+                        name: "",
+                        option_group: "M",
+                        price: 0
+                      }
+                    ])
+                  }
+                  className="text-sm text-blue-600"
+                >
+                  + Ajouter Option
+                </button>
+              </div>
+            )}
             {category.toLowerCase() === "crepe" && (
               <div className="space-y-4 border-t pt-4">
 

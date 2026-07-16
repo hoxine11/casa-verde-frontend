@@ -20,11 +20,12 @@ export interface Product {
   crepeFormulas?: CrepeFormula[];
 
   selectedVariant?: ProductVariant | null;
-  selectedOption?: ProductOption | null;
-  selectedOptions?: ProductOption[]; // للسندويتش فقط
+
+  // Sélection multiple
+  selectedOptions?: ProductOption[];
 
   selectedCrepeSteps?: CrepeStepItem[];
-selectedFormula?: CrepeFormula | null;
+  selectedFormula?: CrepeFormula | null;
 }
 export interface Category {
   id: number;
@@ -64,11 +65,7 @@ export interface Order {
   deliveryFee: string | number;
   total: number;
   date: string;
-  status:
-  | 'pending'
-  | 'confirmed'
-  | 'delivered'
-  | 'cancelled';
+  status: "pending" | "confirmed" | "delivered" | "cancelled";
   created_at: string;
 }
 
