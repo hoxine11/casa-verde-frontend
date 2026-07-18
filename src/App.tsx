@@ -461,7 +461,11 @@ export default function App() {
         "PAYLOAD =",
         JSON.stringify(payload, null, 2)
       );
-
+      console.log("========== TEST ==========");
+      console.log("Type :", orderType);
+      console.log("Nom :", checkoutName);
+      console.log("Payload :", payload);
+      console.log("==========================");
       await fetch(
         "https://casa-verde-production-1d5f.up.railway.app/api/orders",
         {
