@@ -157,6 +157,8 @@ export const printOrder = (order: any) => {
             ${(item.price * item.quantity).toFixed(0)} DA
           </span>
         </div>
+        ${item.variant_name ? `<div class="small">Taille : ${item.variant_name}</div>` : ""}
+        ${item.option_name ? `<div class="small">Personnalisation : ${item.option_name}</div>` : ""}
       `,
         )
         .join("")}

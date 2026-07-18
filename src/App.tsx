@@ -295,20 +295,7 @@ export default function App() {
   const cartSubtotal = useMemo(() => {
     return cart.reduce(
       (sum, item) =>
-        sum +
-        (
-          Number(
-            item.product.selectedVariant?.price ||
-            item.product.price
-          ) +
-          Number(
-            item.product.selectedOptions?.reduce(
-              (sum, option) => sum + Number(option.price),
-              0
-            ) || 0
-          )
-        ) *
-        item.quantity,
+        sum + Number(item.product.price) * item.quantity,
       0
     );
   }, [cart]);
@@ -438,26 +425,24 @@ export default function App() {
           productId: item.product.id,
 
           price:
-            Number(
-              item.product.selectedVariant?.price ||
-              item.product.price
-            ) +
-            (
-              item.product.selectedOptions?.reduce(
-                (sum, option) => sum + Number(option.price),
-                0
-              ) || 0
-            ),
+            Number(item.product.price),
 
           quantity: item.quantity,
 
           variantName:
             item.product.selectedVariant?.name || null,
 
-          optionName:
-            item.product.selectedOptions
-              ?.map((o) => o.name)
-              .join(", ") || null,
+          optionName: [
+            item.product.selectedOptions?.length
+              ? `Options : ${item.product.selectedOptions.map((option) => option.name).join(", ")}`
+              : "",
+            item.product.selectedCrepeSteps?.length
+              ? `Étapes : ${item.product.selectedCrepeSteps.map((step) => step.name).join(", ")}`
+              : "",
+            item.product.selectedFormula
+              ? `Formule : ${item.product.selectedFormula.name}`
+              : "",
+          ].filter(Boolean).join(" • ") || null,
 
           crepeSteps:
             item.product.selectedCrepeSteps
@@ -1087,18 +1072,7 @@ export default function App() {
                                 </p>
                               )}
                             <p className="font-serif text-sm font-semibold text-brand-green/90 mt-1">
-                              {(
-                                Number(
-                                  item.product.selectedVariant?.price ||
-                                  item.product.price
-                                ) +
-                                Number(
-                                  item.product.selectedOptions?.reduce(
-                                    (sum, option) => sum + Number(option.price),
-                                    0
-                                  ) || 0
-                                )
-                              ).toLocaleString()} DZD
+                              {Number(item.product.price).toLocaleString()} DZD
                             </p>
                           </div>
                         </div>
@@ -1393,20 +1367,7 @@ export default function App() {
                             {item.quantity}× <strong className="text-brand-green-dark">{item.product.name}</strong>
                           </span>
                           <span className="font-bold">
-                            {(
-                              (
-                                Number(
-                                  item.product.selectedVariant?.price ||
-                                  item.product.price
-                                ) +
-                                Number(
-                                  item.product.selectedOptions?.reduce(
-                                    (sum, option) => sum + Number(option.price),
-                                    0
-                                  ) || 0
-                                )
-                              ) * item.quantity
-                            ).toLocaleString()} DZD
+                            {(Number(item.product.price) * item.quantity).toLocaleString()} DZD
                           </span>
                         </li>
                       ))}

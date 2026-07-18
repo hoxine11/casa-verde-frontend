@@ -385,7 +385,11 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
               onAddToCart({
                 ...product,
                 selectedVariant,
-                selectedOptions,
+                selectedOptions: isSandwich
+                  ? selectedOptions
+                  : selectedOption
+                    ? [selectedOption]
+                    : [],
                 selectedCrepeSteps,
                 selectedFormula,
                 price: finalPrice,
