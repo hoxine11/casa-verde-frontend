@@ -145,23 +145,70 @@ export const printOrder = (order: any) => {
 
       <div class="line"></div>
 
-      ${order.items
-        .map(
-          (item: any) => `
-        <div class="row">
-          <span>
-            ${item.quantity} x ${item.product_name || item.name}
-          </span>
+   ${order.items
+     .map(
+       (item: any) => `
+<div style="margin-bottom:10px">
 
-          <span>
-            ${(item.price * item.quantity).toFixed(0)} DA
-          </span>
-        </div>
-        ${item.variant_name ? `<div class="small">Taille : ${item.variant_name}</div>` : ""}
-        ${item.option_name ? `<div class="small">Personnalisation : ${item.option_name}</div>` : ""}
-      `,
-        )
-        .join("")}
+  <div class="row">
+    <span><strong>${item.quantity} × ${item.product_name || item.name}</strong></span>
+    <span>${(item.price * item.quantity).toFixed(0)} DA</span>
+  </div>
+
+  ${
+    item.variant_name
+      ? `<div class="small" style="padding-left:10px;">• Taille : ${item.variant_name}</div>`
+      : ""
+  }
+
+  ${
+    item.option_name
+      ? `
+<div class="small" style="padding-left:10px;">
+• Personnalisation :
+</div>
+
+${item.option_name
+  .split(/,|•/)
+  .filter((x: string) => x.trim())
+  .map(
+    (x: string) =>
+      `<div class="small" style="padding-left:22px;">- ${x.trim()}</div>`,
+  )
+  .join("")}
+`
+      : ""
+  }
+
+  ${
+    item.crepe_steps
+      ? `
+<div class="small" style="padding-left:10px;">
+• Étapes :
+</div>
+
+${item.crepe_steps
+  .split(",")
+  .filter((x: string) => x.trim())
+  .map(
+    (x: string) =>
+      `<div class="small" style="padding-left:22px;">- ${x.trim()}</div>`,
+  )
+  .join("")}
+`
+      : ""
+  }
+
+  ${
+    item.formula_name
+      ? `<div class="small" style="padding-left:10px;">• Formule : ${item.formula_name}</div>`
+      : ""
+  }
+
+</div>
+`,
+     )
+     .join("")}
 
       <div class="line"></div>
 
