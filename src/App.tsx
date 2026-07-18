@@ -25,6 +25,7 @@ import {
   Flame,
   Award
 } from 'lucide-react';
+import { useRef } from "react";
 
 // Types imports
 import { Product, Category, CartItem, Order, Settings, OrderItem } from './types';
@@ -48,7 +49,6 @@ import AdminSettings from './components/AdminSettings';
 
 // Mock historical orders for pre-populating charts and dashboard stats (exactly matching screenshots)
 
-
 const INITIAL_SETTINGS: Settings = {
   restaurantName: 'Casa Verde – Crêperie AS',
   phone: '+213 5 55 12 34 56',
@@ -60,6 +60,9 @@ const INITIAL_SETTINGS: Settings = {
 const socket = io("https://casa-verde-production-1d5f.up.railway.app");
 export default function App() {
   // Navigation root views
+  const notificationSound = useRef(
+    new Audio("/sounds/new-order.mp3")
+  );
   const [activeView, setActiveView] = useState<string>('home');
   useEffect(() => {
     console.log(
@@ -78,7 +81,7 @@ export default function App() {
         "token"
       );
     });
-  
+
   // Dynamic routing & URL syncing
   useEffect(() => {
     const handleUrlSync = () => {
@@ -224,6 +227,13 @@ export default function App() {
   useEffect(() => {
     socket.on("new-order", () => {
       console.log("Nouvelle commande reçue !");
+
+      notificationSound.current.currentTime = 0;
+
+      notificationSound.current.play().catch((err) => {
+        console.error(err);
+      });
+
       refreshOrders();
     });
 
