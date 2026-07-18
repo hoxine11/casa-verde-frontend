@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import { io } from "socket.io-client";
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -57,7 +57,7 @@ const INITIAL_SETTINGS: Settings = {
   facebook: 'https://www.facebook.com/105289945452858?ref=NONE_xav_ig_profile_page_web',
   instagram: 'https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Fcreperie_as%3Ffbclid%3DIwZXh0bgNhZW0CMTAAc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHvtQ5JTBgbYlkjvftKPGpKbWoyUit_geaqsueMfMY09_B1cMr60Ndnc88OKi_aem_sU6yDrAdqWEqbaSb4CTaGw&h=AUBdsJ5oj0mblPAaaqmYtTnkqbFzvmVe8Eb1Q_7MvoQsOrF04L0o7C6PJPLw1koBju_K1z7EaTW-fcB-eru111AsqQOfc4NW8SQ9nz0BsDbHXXLuEpXh2uMbLHQPGMvZ6RmV'
 };
-
+const socket = io("https://casa-verde-production-1d5f.up.railway.app");
 export default function App() {
   // Navigation root views
   const [activeView, setActiveView] = useState<string>('home');
@@ -78,7 +78,7 @@ export default function App() {
         "token"
       );
     });
-
+  
   // Dynamic routing & URL syncing
   useEffect(() => {
     const handleUrlSync = () => {
@@ -192,51 +192,44 @@ export default function App() {
   }, []);
 
   const [orders, setOrders] = useState<Order[]>([]);
+  const refreshOrders = async () => {
+    const res = await fetch(
+      "https://casa-verde-production-1d5f.up.railway.app/api/orders"
+    );
 
+    const data = await res.json();
+
+    const mappedOrders = data.map((order: any) => ({
+      id: order.id,
+      customerName: order.full_name,
+      phone: order.phone,
+      address: order.address,
+      neighborhood: order.district,
+      comment: order.comment || "",
+      orderType: order.order_type || "delivery",
+      subtotal: Number(order.subtotal),
+      deliveryFee: Number(order.delivery_fee),
+      total: Number(order.total),
+      created_at: order.created_at,
+      date: new Date(order.created_at).toLocaleString(),
+      status: order.status.toLowerCase(),
+      items: order.items || [],
+    }));
+
+    setOrders(mappedOrders);
+  };
   useEffect(() => {
-    fetch("https://casa-verde-production-1d5f.up.railway.app/api/orders")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("ORDERS API =>", data);
-        const mappedOrders = data.map((order: any) => ({
-          id: order.id,
-          customerName: order.full_name,
-          phone: order.phone,
-          address: order.address,
-          neighborhood: order.district,
-          comment: order.comment || "",
-          orderType: order.order_type || "delivery",
+    refreshOrders();
+  }, []);
+  useEffect(() => {
+    socket.on("new-order", () => {
+      console.log("Nouvelle commande reçue !");
+      refreshOrders();
+    });
 
-          subtotal: Number(order.subtotal),
-
-          deliveryFee:
-            isNaN(Number(order.delivery_fee))
-              ? order.delivery_fee
-              : Number(order.delivery_fee),
-
-          total: Number(order.total),
-
-          created_at: order.created_at,
-          date: new Date(order.created_at).toLocaleString(),
-
-          status: order.status.toLowerCase(),
-
-          items: (order.items || []).map((item: any) => ({
-            id: item.id,
-            productId: item.productId,
-            name: item.name,
-            price: Number(item.price),
-            quantity: item.quantity,
-            variant_name: item.variant_name,
-            option_name: item.option_name,
-          })),
-        }));
-        console.log(mappedOrders);
-        setOrders(mappedOrders);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    return () => {
+      socket.off("new-order");
+    };
   }, []);
 
   const [settings, setSettings] = useState<Settings>(() => {
