@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { Search, Eye, Phone, Trash2, SlidersHorizontal, CheckCircle } from 'lucide-react';
+import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag } from 'lucide-react';
 import { Order } from '../types';
 import { printOrder } from "../utils/printOrder";
 interface AdminOrdersProps {
@@ -31,6 +31,13 @@ export default function AdminOrders({
 }: AdminOrdersProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterType, setFilterType] = useState<string>('all');
+
+  const orderTypes = {
+    delivery: { label: 'Livraison', icon: Truck, className: 'bg-sky-100 text-sky-800' },
+    table: { label: 'Sur place', icon: Utensils, className: 'bg-violet-100 text-violet-800' },
+    pickup: { label: 'À emporter', icon: ShoppingBag, className: 'bg-amber-100 text-amber-800' },
+  } as const;
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -43,8 +50,11 @@ export default function AdminOrders({
     const matchesStatus =
       filterStatus === "all" ||
       order.status === filterStatus;
+    const matchesType =
+      filterType === "all" ||
+      (order.orderType || "delivery") === filterType;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesType;
   });
 
   return (
@@ -57,6 +67,32 @@ export default function AdminOrders({
             Traitez, suivez, et mettez à jour l'évolution des livraisons en cours.
           </p>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {Object.entries(orderTypes).map(([type, config]) => {
+          const Icon = config.icon;
+          const count = orders.filter((order) => (order.orderType || 'delivery') === type).length;
+
+          return (
+            <button
+              key={type}
+              type="button"
+              onClick={() => setFilterType(filterType === type ? 'all' : type)}
+              className={`rounded-2xl border p-4 text-left transition-all ${filterType === type
+                ? 'border-brand-gold bg-brand-ivory shadow-sm'
+                : 'border-brand-green/10 bg-white hover:border-brand-gold/50'
+                }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-brand-green">{config.label}</span>
+                <span className={`rounded-full p-2 ${config.className}`}><Icon className="w-4 h-4" /></span>
+              </div>
+              <p className="mt-3 font-serif text-2xl font-bold text-brand-green">{count}</p>
+              <p className="text-[10px] text-brand-green/60 uppercase tracking-wider">commandes</p>
+            </button>
+          );
+        })}
       </div>
 
       {/* Sticky Filter Bar */}
@@ -99,6 +135,17 @@ export default function AdminOrders({
               {item.label}
             </button>
           ))}
+          <select
+            value={filterType}
+            onChange={(event) => setFilterType(event.target.value)}
+            className="ml-auto bg-white border border-brand-green/10 rounded-full px-3.5 py-1.5 text-[11px] font-semibold text-brand-green outline-none"
+            aria-label="Filtrer par type de commande"
+          >
+            <option value="all">Tous les types</option>
+            <option value="delivery">Livraison</option>
+            <option value="table">Sur place</option>
+            <option value="pickup">À emporter</option>
+          </select>
         </div>
       </div>
 
@@ -115,6 +162,9 @@ export default function AdminOrders({
                 <tr className="bg-brand-green/5 text-brand-green/60 uppercase tracking-widest font-semibold text-[10px] border-b border-brand-green/10">
                   <th className="px-6 py-4">N° Commande</th>
                   <th className="px-6 py-4">Client</th>
+                  <th className="px-6 py-4">
+                    TYPE
+                  </th>
                   <th className="px-6 py-4">Téléphone</th>
                   <th className="px-6 py-4">Adresse / Quartier</th>
                   <th className="px-6 py-4 text-right">Montant</th>
@@ -128,6 +178,20 @@ export default function AdminOrders({
                   <tr key={order.id} className="hover:bg-brand-green/5 transition-colors">
                     <td className="px-6 py-4 font-mono font-bold">{order.id}</td>
                     <td className="px-6 py-4">{order.customerName}</td>
+                    <td className="px-6 py-4">
+                      {(() => {
+                        const type = order.orderType || 'delivery';
+                        const config = orderTypes[type];
+                        const Icon = config.icon;
+
+                        return (
+                          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold ${config.className}`}>
+                            <Icon className="w-3.5 h-3.5" />
+                            {config.label}
+                          </span>
+                        );
+                      })()}
+                    </td>
                     <td className="px-6 py-4">
                       <a
                         href={`tel:${order.phone}`}
@@ -279,7 +343,7 @@ ${order.status === 'pending'
               <div className="py-4 border-b border-brand-green/10">
 
                 <h4 className="font-serif text-sm font-semibold text-brand-green mb-3">Détail des plats</h4>
-               
+
                 <ul className="space-y-3 font-sans text-xs">
                   {selectedOrder.items.map((item) => (
                     <li

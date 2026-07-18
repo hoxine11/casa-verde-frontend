@@ -205,6 +205,7 @@ export default function App() {
           address: order.address,
           neighborhood: order.district,
           comment: order.comment || "",
+          orderType: order.order_type || "delivery",
 
           subtotal: Number(order.subtotal),
 
@@ -265,9 +266,8 @@ export default function App() {
   const [checkoutPhone, setCheckoutPhone] = useState('');
   const [checkoutAddress, setCheckoutAddress] = useState('');
   const [checkoutComment, setCheckoutComment] = useState('');
-  const [orderType, setOrderType] = useState<"delivery" | "table">(
-    "delivery"
-  );
+  const [orderType, setOrderType] =
+    useState<"delivery" | "table" | "pickup">("delivery");
 
   // Succeeded order placeholder for tracking
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
@@ -379,13 +379,39 @@ export default function App() {
   ) => {
     e.preventDefault();
 
+    // ================= VALIDATION =================
+
+    if (!checkoutName.trim()) {
+      alert("Veuillez saisir votre nom.");
+      return;
+    }
+
+    if (
+      (orderType === "delivery" || orderType === "pickup") &&
+      !checkoutPhone.trim()
+    ) {
+      alert("Veuillez saisir votre téléphone.");
+      return;
+    }
+
+    if (
+      orderType === "delivery" &&
+      !checkoutAddress.trim()
+    ) {
+      alert("Veuillez saisir votre adresse.");
+      return;
+    }
+
+    // =============================================
+
     try {
       console.log("CART =", cart);
+
       const payload = {
         customerName: checkoutName,
 
         phone:
-          orderType === "delivery"
+          orderType !== "table"
             ? checkoutPhone
             : "",
 
@@ -401,10 +427,9 @@ export default function App() {
 
         subtotal: cartSubtotal,
 
-        // L'admin fixera les frais de livraison
+        // Les frais seront ajoutés par l'admin
         deliveryFee: 0,
 
-        // Le total est uniquement le sous-total
         total: cartSubtotal,
 
         orderType,
@@ -443,10 +468,12 @@ export default function App() {
             item.product.selectedFormula?.name || null,
         })),
       };
+
       console.log(
         "PAYLOAD =",
         JSON.stringify(payload, null, 2)
       );
+
       await fetch(
         "https://casa-verde-production-1d5f.up.railway.app/api/orders",
         {
@@ -462,26 +489,33 @@ export default function App() {
         "https://casa-verde-production-1d5f.up.railway.app/api/orders"
       );
 
+      const ordersData = await ordersRes.json();
 
-      const ordersData =
-        await ordersRes.json();
-      console.log("ORDERS DATA =", ordersData);
       const mappedOrders = ordersData.map((order: any) => ({
         id: order.id,
+
         customerName: order.full_name,
         phone: order.phone,
         address: order.address,
         neighborhood: order.district,
+
         comment: order.comment || "",
+
+        orderType: order.order_type || "delivery",
+
         subtotal: Number(order.subtotal),
         deliveryFee: Number(order.delivery_fee),
         total: Number(order.total),
+
         date: new Date(order.created_at).toLocaleString(),
+
         status: order.status.toLowerCase(),
-        items: order.items || []
+
+        items: order.items || [],
       }));
-      console.log("MAPPED =>", mappedOrders);
+
       setOrders(mappedOrders);
+
       setCart([]);
 
       setCheckoutName("");
@@ -527,6 +561,7 @@ export default function App() {
         address: order.address,
         neighborhood: order.district,
         comment: order.comment || "",
+        orderType: order.order_type || "delivery",
         subtotal: Number(order.subtotal),
         deliveryFee: Number(order.delivery_fee),
         total: Number(order.total),
@@ -563,6 +598,7 @@ export default function App() {
         address: order.address,
         neighborhood: order.district,
         comment: order.comment || "",
+        orderType: order.order_type || "delivery",
         subtotal: Number(order.subtotal),
         deliveryFee: Number(order.delivery_fee),
         total: Number(order.total),
@@ -1184,7 +1220,7 @@ export default function App() {
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
 
                       {/* À table */}
 
@@ -1239,14 +1275,42 @@ export default function App() {
                           </p>
                         </div>
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setOrderType("pickup")}
+                        className={`overflow-hidden rounded-3xl border-2 transition-all duration-300 ${orderType === "pickup"
+                          ? "border-brand-gold shadow-2xl scale-[1.03]"
+                          : "border-brand-green/10 hover:border-brand-green"
+                          }`}
+                      >
+                        <img
+                          src="/images/pickup.png"
+                          alt="À emporter"
+                          className="w-full h-56 object-cover"
+                        />
+
+                        <div className="bg-white py-5">
+                          <h3 className="font-serif text-2xl text-brand-green">
+                            À emporter
+                          </h3>
+
+                          <p className="text-sm text-brand-green/70 mt-1">
+                            Retirez votre commande au restaurant
+                          </p>
+                        </div>
+                      </button>
 
                     </div>
 
                   </div>
                   <h3 className="font-serif text-2xl font-bold text-brand-green pb-3 border-b border-brand-green/10 mb-6">
-                    {orderType === "delivery"
-                      ? "Vos informations de livraison"
-                      : "Vos informations"}
+                    {
+                      orderType === "delivery"
+                        ? "Vos informations de livraison"
+                        : orderType === "pickup"
+                          ? "Vos informations de retrait"
+                          : "Vos informations"
+                    }
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 font-sans text-xs">
 
@@ -1264,7 +1328,7 @@ export default function App() {
                     </div>
 
                     {/* Tel */}
-                    {orderType === "delivery" && (
+                    {(orderType === "delivery" || orderType === "pickup") && (
                       <div className="space-y-2">
                         <label className="text-brand-green font-semibold block">Téléphone *</label>
                         <input

@@ -64,6 +64,7 @@ export interface Order {
   subtotal: number;
   deliveryFee: string | number;
   total: number;
+  orderType: "delivery" | "table" | "pickup";
   date: string;
   status: "pending" | "confirmed" | "delivered" | "cancelled";
   created_at: string;
