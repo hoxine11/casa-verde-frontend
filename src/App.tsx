@@ -55,7 +55,8 @@ const INITIAL_SETTINGS: Settings = {
   address: 'BESSA,BERRIAN , GHARDAIA, ALGER',
   deliveryFee: "",
   facebook: 'https://www.facebook.com/105289945452858?ref=NONE_xav_ig_profile_page_web',
-  instagram: 'https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Fcreperie_as%3Ffbclid%3DIwZXh0bgNhZW0CMTAAc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHvtQ5JTBgbYlkjvftKPGpKbWoyUit_geaqsueMfMY09_B1cMr60Ndnc88OKi_aem_sU6yDrAdqWEqbaSb4CTaGw&h=AUBdsJ5oj0mblPAaaqmYtTnkqbFzvmVe8Eb1Q_7MvoQsOrF04L0o7C6PJPLw1koBju_K1z7EaTW-fcB-eru111AsqQOfc4NW8SQ9nz0BsDbHXXLuEpXh2uMbLHQPGMvZ6RmV'
+  instagram: 'https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Fcreperie_as%3Ffbclid%3DIwZXh0bgNhZW0CMTAAc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHvtQ5JTBgbYlkjvftKPGpKbWoyUit_geaqsueMfMY09_B1cMr60Ndnc88OKi_aem_sU6yDrAdqWEqbaSb4CTaGw&h=AUBdsJ5oj0mblPAaaqmYtTnkqbFzvmVe8Eb1Q_7MvoQsOrF04L0o7C6PJPLw1koBju_K1z7EaTW-fcB-eru111AsqQOfc4NW8SQ9nz0BsDbHXXLuEpXh2uMbLHQPGMvZ6RmV',
+  is_open: true
 };
 const socket = io("https://casa-verde-production-1d5f.up.railway.app");
 export default function App() {
@@ -257,6 +258,7 @@ export default function App() {
           deliveryFee: (data.delivery_fee),
           facebook: data.facebook,
           instagram: data.instagram,
+          is_open: data.is_open,
         });
       })
       .catch(console.error);

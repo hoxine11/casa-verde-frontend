@@ -19,6 +19,7 @@ export default function AdminSettings({ settings, onUpdateSettings }: AdminSetti
   const [deliveryFee, setDeliveryFee] = useState(settings.deliveryFee);
   const [facebook, setFacebook] = useState(settings.facebook);
   const [instagram, setInstagram] = useState(settings.instagram);
+  const [isOpen, setIsOpen] = useState(settings.is_open);
 
   const [statusMessage, setStatusMessage] = useState('');
 
@@ -38,6 +39,7 @@ export default function AdminSettings({ settings, onUpdateSettings }: AdminSetti
           deliveryFee,
           facebook,
           instagram,
+          is_open: isOpen,
         }),
       }
     );
@@ -49,6 +51,7 @@ export default function AdminSettings({ settings, onUpdateSettings }: AdminSetti
       deliveryFee,
       facebook,
       instagram,
+      is_open: isOpen, // Preserve the is_open state
     });
 
     setStatusMessage('Paramètres enregistrés avec succès !');
@@ -133,7 +136,36 @@ export default function AdminSettings({ settings, onUpdateSettings }: AdminSetti
             </div>
 
           </div>
+          {/* Disponibilité du restaurant */}
+          <div className="border-t border-brand-green/10 pt-6">
+            <h3 className="font-serif text-sm font-semibold text-brand-green mb-4">
+              Disponibilité
+            </h3>
 
+            <div className="flex items-center justify-between bg-brand-green/5 rounded-2xl p-5 border border-brand-green/10">
+              <div>
+                <h4 className="font-semibold text-brand-green">
+                  Restaurant ouvert
+                </h4>
+
+                <p className="text-xs text-brand-green/70 mt-1">
+                  Lorsque cette option est désactivée, les clients ne pourront plus passer de commande.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className={`relative w-16 h-9 rounded-full transition-all duration-300 ${isOpen ? "bg-emerald-500" : "bg-red-500"
+                  }`}
+              >
+                <span
+                  className={`absolute top-1 left-1 w-7 h-7 bg-white rounded-full transition-transform duration-300 ${isOpen ? "translate-x-7" : ""
+                    }`}
+                />
+              </button>
+            </div>
+          </div>
           <div className="border-t border-brand-green/10 pt-6">
             <h3 className="font-serif text-sm font-semibold text-brand-green mb-4">Réseaux sociaux</h3>
 

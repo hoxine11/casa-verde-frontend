@@ -78,6 +78,7 @@ export interface Settings {
   deliveryFee: string;
   facebook: string;
   instagram: string;
+  is_open: boolean;
 }
 
 export interface Customer {
