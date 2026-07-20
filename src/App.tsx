@@ -1217,7 +1217,7 @@ export default function App() {
 
                     <div className="text-center">
                       <h2 className="font-serif text-3xl font-bold text-brand-green">
-                        Type de commande
+                        Type  de commande
                       </h2>
 
                       <p className="text-sm text-brand-green/60 mt-2">
