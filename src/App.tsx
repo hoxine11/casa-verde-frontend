@@ -317,7 +317,12 @@ export default function App() {
           item.product.id === product.id &&
           item.product.selectedVariant?.id === product.selectedVariant?.id &&
           JSON.stringify(item.product.selectedOptions) ===
-          JSON.stringify(product.selectedOptions));
+          JSON.stringify(product.selectedOptions) &&
+          JSON.stringify(item.product.selectedCrepeSteps) ===
+          JSON.stringify(product.selectedCrepeSteps) &&
+          item.product.selectedFormula?.id ===
+          product.selectedFormula?.id
+      );
       if (exists) {
         return prev.map((item) => {
           const sameProduct =
@@ -330,8 +335,21 @@ export default function App() {
           const sameOptions =
             JSON.stringify(item.product.selectedOptions) ===
             JSON.stringify(product.selectedOptions);
+          const sameCrepeSteps =
+            JSON.stringify(item.product.selectedCrepeSteps) ===
+            JSON.stringify(product.selectedCrepeSteps);
 
-          if (sameProduct && sameVariant && sameOptions) {
+          const sameFormula =
+            item.product.selectedFormula?.id ===
+            product.selectedFormula?.id;
+
+          if (
+            sameProduct &&
+            sameVariant &&
+            sameOptions &&
+            sameCrepeSteps &&
+            sameFormula
+          ) {
             return {
               ...item,
               quantity: item.quantity + 1
@@ -341,26 +359,32 @@ export default function App() {
           return item;
         });
       }
-      return [...prev, { product, quantity: 1 }];
+      return [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          product: structuredClone(product),
+          quantity: 1,
+        },
+      ];
     });
   };
 
-  const handleUpdateCartQuantity = (productId: number, delta: number) => {
-    setCart((prev) =>
-      prev
-        .map((item) => {
-          if (item.product.id === productId) {
-            const newQty = item.quantity + delta;
-            return { ...item, quantity: newQty };
-          }
-          return item;
-        })
+  const handleUpdateCartQuantity = (id: string, delta: number) => {
+    setCart(prev =>
+      prev.map(item => {
+        if (item.id === id) {
+          const newQty = item.quantity + delta;
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      })
         .filter((item) => item.quantity > 0)
     );
   };
 
-  const handleRemoveFromCart = (productId: number) => {
-    setCart((prev) => prev.filter((item) => item.product.id !== productId));
+  const handleRemoveFromCart = (id: string) => {
+    setCart(prev => prev.filter(item => item.id !== id));
   };
 
   // Submit order checkout flow
@@ -1044,7 +1068,7 @@ export default function App() {
                   <div className="lg:col-span-2 space-y-4">
                     {cart.map((item) => (
                       <div
-                        key={item.product.id}
+                        key={item.id}
                         className="bg-brand-green/5 border border-brand-green/10 rounded-3xl p-5 flex items-center justify-between gap-4"
                       >
                         <div className="flex items-center space-x-4">
@@ -1088,7 +1112,7 @@ export default function App() {
                           {/* Quantity Controls */}
                           <div className="flex items-center space-x-2 bg-brand-ivory rounded-full border border-brand-green/15 p-1 select-none">
                             <button
-                              onClick={() => handleUpdateCartQuantity(item.product.id, -1)}
+                              onClick={() => handleUpdateCartQuantity(item.id, -1)}
                               className="w-7 h-7 rounded-full text-brand-green hover:bg-brand-green hover:text-brand-ivory flex items-center justify-center transition-colors cursor-pointer"
                             >
                               <Minus className="w-3.5 h-3.5" />
@@ -1097,7 +1121,7 @@ export default function App() {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => handleUpdateCartQuantity(item.product.id, 1)}
+                              onClick={() => handleUpdateCartQuantity(item.id, 1)}
                               className="w-7 h-7 rounded-full text-brand-green hover:bg-brand-green hover:text-brand-ivory flex items-center justify-center transition-colors cursor-pointer"
                             >
                               <Plus className="w-3.5 h-3.5" />
@@ -1105,7 +1129,7 @@ export default function App() {
                           </div>
 
                           <button
-                            onClick={() => handleRemoveFromCart(item.product.id)}
+                            onClick={() => handleRemoveFromCart(item.id)}
                             className="p-2 border border-rose-100 hover:bg-rose-50 text-rose-500 rounded-full transition-colors cursor-pointer"
                             title="Supprimer du panier"
                           >
@@ -1369,7 +1393,7 @@ export default function App() {
                     {/* Selections review summary */}
                     <ul className="space-y-3 font-sans text-xs max-h-56 overflow-y-auto pr-1">
                       {cart.map((item) => (
-                        <li key={item.product.id} className="flex justify-between items-center text-brand-green/90 font-medium">
+                        <li key={item.id} className="flex justify-between items-center text-brand-green/90 font-medium">
                           <span>
                             {item.quantity}× <strong className="text-brand-green-dark">{item.product.name}</strong>
                           </span>
