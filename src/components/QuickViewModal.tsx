@@ -6,7 +6,7 @@
 import { X, Plus, Clock, ShieldAlert } from 'lucide-react';
 import { motion } from 'motion/react';
 
-import { Product, ProductVariant, ProductOption, CrepeFormula, CrepeStepItem, Settings } from '../types';
+import { Product, ProductVariant, ProductOption, CrepeFormula, CrepeStepItem , Settings} from '../types';
 import { useState, useEffect } from 'react';
 
 interface QuickViewModalProps {
@@ -24,7 +24,7 @@ export default function QuickViewModal({
   onAddToCart,
   settings
 }: QuickViewModalProps) {
-
+console.log("QuickView settings:", settings);
   const [variants, setVariants] =
     useState<ProductVariant[]>([]);
 
@@ -399,10 +399,7 @@ export default function QuickViewModal({
                 </div>
 
                 <button
-                  disabled={!settings.is_open}
                   onClick={() => {
-                    if (!settings.is_open) return;
-
                     onAddToCart({
                       ...product,
                       selectedVariant,
@@ -411,26 +408,25 @@ export default function QuickViewModal({
                       selectedFormula,
 
                       price:
-                        Number(selectedVariant?.price || product.price) +
+                        Number(selectedVariant?.price || product.price)
+                        +
                         selectedOptions.reduce(
                           (sum, option) => sum + Number(option.price),
                           0
-                        ) +
+                        )
+                        +
                         selectedCrepeSteps.reduce(
                           (sum, step) => sum + Number(step.price),
                           0
-                        ) +
-                        Number(selectedFormula?.price || 0),
+                        )
+                        +
+                        Number(selectedFormula?.price || 0)
                     });
-
                     onClose();
                   }}
-                  className={`px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border ${settings.is_open
-                      ? "bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
-                      : "bg-gray-400 text-white border-gray-400 cursor-not-allowed"
-                    }`}
+                  className="px-6 py-3 bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
                 >
-                  {settings.is_open ? "Ajouter au panier" : "Restaurant fermé"}
+                  Ajouter au panier
                 </button>
               </div>
             </div>
