@@ -248,6 +248,9 @@ export default function App() {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
   useEffect(() => {
+    console.log("Current settings =", settings);
+  }, [settings]);
+  useEffect(() => {
     fetch("https://casa-verde-production-1d5f.up.railway.app/api/settings")
       .then((res) => res.json())
       .then((data) => {
@@ -260,6 +263,7 @@ export default function App() {
           instagram: data.instagram,
           is_open: data.is_open,
         });
+        console.log("API settings =", data);
       })
       .catch(console.error);
   }, []);
@@ -1372,20 +1376,20 @@ export default function App() {
                   </div>
 
                   {/* Comment */}
-                  
-                    <div className="space-y-2 font-sans text-xs">
-                      <label className="text-brand-green font-semibold block">Commentaire ou Consigne de livraison</label>
-                      <textarea
-                        value={checkoutComment}
-                        onChange={(e) => setCheckoutComment(e.target.value)}
-                        rows={3}
-                        className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold"
-                      />
-                    </div>
-                  
+
+                  <div className="space-y-2 font-sans text-xs">
+                    <label className="text-brand-green font-semibold block">Commentaire ou Consigne de livraison</label>
+                    <textarea
+                      value={checkoutComment}
+                      onChange={(e) => setCheckoutComment(e.target.value)}
+                      rows={3}
+                      className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold"
+                    />
+                  </div>
 
 
-                  
+
+
                 </div>
 
                 {/* Right Column: Checkout summary review list */}
