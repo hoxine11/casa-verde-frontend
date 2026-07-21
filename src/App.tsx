@@ -1744,6 +1744,7 @@ export default function App() {
             product={selectedQuickProduct}
             onClose={() => setSelectedQuickProduct(null)}
             onAddToCart={handleAddToCart}
+            settings={settings}
           />
         )}
       </AnimatePresence>
