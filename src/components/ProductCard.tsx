@@ -6,16 +6,17 @@
 import { Plus, Eye } from 'lucide-react';
 import { CrepeFormula, CrepeStepItem, ProductOption } from '../types';
 import { motion } from 'motion/react';
-import { Product } from '../types';
+import { Product ,Settings} from '../types';
 import { useState } from 'react';
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
   onQuickView: (product: Product) => void;
   key?: number;
+  settings: Settings;
 }
 
-export default function ProductCard({ product, onAddToCart, onQuickView }: ProductCardProps) {
+export default function ProductCard({ product, onAddToCart, onQuickView ,settings}: ProductCardProps) {
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants?.[0] || null
   );
@@ -379,26 +380,33 @@ export default function ProductCard({ product, onAddToCart, onQuickView }: Produ
             <span className="font-sans text-[10px] font-bold text-brand-gold ml-1 tracking-wider">DZD</span>
           </div>
 
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() =>
-              onAddToCart({
-                ...product,
-                selectedVariant,
-                selectedOptions: isSandwich
-                  ? selectedOptions
-                  : selectedOption
-                    ? [selectedOption]
-                    : [],
-                selectedCrepeSteps,
-                selectedFormula,
-                price: finalPrice,
-              })
-            }
-            className="px-5 py-2 bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
-          >
-            Ajouter
-          </motion.button>
+         <motion.button
+  disabled={!settings?.is_open}
+  whileTap={{ scale: 0.97 }}
+  onClick={() => {
+    if (!settings?.is_open) return;
+
+    onAddToCart({
+      ...product,
+      selectedVariant,
+      selectedOptions: isSandwich
+        ? selectedOptions
+        : selectedOption
+          ? [selectedOption]
+          : [],
+      selectedCrepeSteps,
+      selectedFormula,
+      price: finalPrice,
+    });
+  }}
+  className={`px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border ${
+    settings?.is_open
+      ? "bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
+      : "bg-gray-400 text-white border-gray-400 cursor-not-allowed"
+  }`}
+>
+  {settings?.is_open ? "Ajouter" : "Restaurant fermé"}
+</motion.button>
         </div>
       </div>
     </motion.div>

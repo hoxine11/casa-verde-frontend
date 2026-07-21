@@ -917,6 +917,7 @@ export default function App() {
                           product={prod}
                           onAddToCart={handleAddToCart}
                           onQuickView={(p) => setSelectedQuickProduct(p)}
+                          settings={settings}
                         />
                       ))}
                     </div>
@@ -1025,6 +1026,7 @@ export default function App() {
                       product={product}
                       onAddToCart={handleAddToCart}
                       onQuickView={(p) => setSelectedQuickProduct(p)}
+                      settings={settings}
                     />
                   ))}
                 </div>
