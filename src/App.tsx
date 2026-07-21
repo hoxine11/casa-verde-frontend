@@ -1372,7 +1372,7 @@ export default function App() {
                   </div>
 
                   {/* Comment */}
-                  {orderType === "delivery" && (
+                  
                     <div className="space-y-2 font-sans text-xs">
                       <label className="text-brand-green font-semibold block">Commentaire ou Consigne de livraison</label>
                       <textarea
@@ -1382,7 +1382,10 @@ export default function App() {
                         className="w-full bg-brand-ivory border border-brand-green/10 rounded-xl py-3 px-4 text-brand-green outline-none focus:ring-1 focus:ring-brand-gold"
                       />
                     </div>
-                  )}
+                  
+
+
+                  
                 </div>
 
                 {/* Right Column: Checkout summary review list */}
