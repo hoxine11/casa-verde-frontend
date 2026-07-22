@@ -7,11 +7,12 @@ import { useState } from 'react';
 import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag } from 'lucide-react';
 import { Order } from '../types';
 import { printOrder } from "../utils/printOrder";
+import {  Settings } from "../types";
 interface AdminOrdersProps {
   orders: Order[];
   onUpdateStatus: (
     id: number,
-    status: Order['status']
+    status: Order["status"]
   ) => void;
 
   onDeleteOrder: (
@@ -20,6 +21,8 @@ interface AdminOrdersProps {
 
   selectedOrder: Order | null;
   setSelectedOrder: (order: Order | null) => void;
+
+  settings: Settings;
 }
 
 export default function AdminOrders({
@@ -27,7 +30,8 @@ export default function AdminOrders({
   onUpdateStatus,
   onDeleteOrder,
   selectedOrder,
-  setSelectedOrder
+  setSelectedOrder,
+  settings
 }: AdminOrdersProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -250,7 +254,7 @@ ${order.status === 'pending'
                         </button>
 
                         <button
-                          onClick={() => printOrder(order)}
+                          onClick={() => printOrder(order, settings.phone)}
                           disabled={order.status !== "confirmed"}
                           className={`p-2 rounded-full transition-all
       ${order.status === "confirmed"

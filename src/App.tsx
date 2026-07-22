@@ -1693,6 +1693,7 @@ export default function App() {
                       onDeleteOrder={handleDeleteOrder}
                       selectedOrder={activeSelectedOrderPanel}
                       setSelectedOrder={setActiveSelectedOrderPanel}
+                      settings={settings}
                     />
                   )}
 

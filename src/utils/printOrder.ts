@@ -1,4 +1,4 @@
-export const printOrder = (order: any) => {
+export const printOrder = (order: any, restaurantPhone: string) => {
   const printWindow = window.open("", "_blank", "width=400,height=700");
 
   if (!printWindow) return;
@@ -111,8 +111,8 @@ export const printOrder = (order: any) => {
         </div>
 
         <div class="small">
-          Tel : +213 555 12 34 56
-        </div>
+  Tel : ${restaurantPhone}
+</div>
 
       </div>
 
