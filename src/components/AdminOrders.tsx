@@ -5,11 +5,12 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag, Pencil } from 'lucide-react';
-import { Order, OrderItem } from '../types';
+import { Order, OrderItem, Product } from '../types';
 import { printOrder } from "../utils/printOrder";
 import { Settings } from "../types";
 interface AdminOrdersProps {
   orders: Order[];
+  products: Product[];
   onUpdateStatus: (
     id: number,
     status: Order["status"]
@@ -31,7 +32,8 @@ export default function AdminOrders({
   onDeleteOrder,
   selectedOrder,
   setSelectedOrder,
-  settings
+  settings,
+  products
 }: AdminOrdersProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -586,9 +588,38 @@ ${order.status === 'pending'
         className="w-full border rounded-xl px-4 py-3 mb-5"
       />
 
-      <div className="text-gray-500 text-center py-10">
-        Les produits apparaîtront ici...
-      </div>
+     <div className="space-y-2">
+
+    {products.map(product => (
+
+        <div
+            key={product.id}
+            className="flex justify-between items-center border rounded-xl p-3 hover:bg-gray-50 cursor-pointer"
+        >
+
+            <div>
+
+                <div className="font-semibold">
+                    {product.name}
+                </div>
+
+                <div className="text-sm text-gray-500">
+                    {product.price} DA
+                </div>
+
+            </div>
+
+            <button
+                className="px-3 py-1 rounded-lg bg-brand-green text-white"
+            >
+                Ajouter
+            </button>
+
+        </div>
+
+    ))}
+
+</div>
 
     </div>
 

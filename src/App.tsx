@@ -1694,6 +1694,7 @@ export default function App() {
                       selectedOrder={activeSelectedOrderPanel}
                       setSelectedOrder={setActiveSelectedOrderPanel}
                       settings={settings}
+                      products={products}
                     />
                   )}
 
