@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag, Pencil } from 'lucide-react';
-import { Order } from '../types';
+import { Order, OrderItem } from '../types';
 import { printOrder } from "../utils/printOrder";
 import { Settings } from "../types";
 interface AdminOrdersProps {
@@ -45,11 +45,13 @@ export default function AdminOrders({
   const [editCustomerName, setEditCustomerName] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [editAddress, setEditAddress] = useState("");
+  const [editItems, setEditItems] = useState<OrderItem[]>([]);
   useEffect(() => {
     if (editingOrder) {
       setEditCustomerName(editingOrder.customerName);
       setEditPhone(editingOrder.phone);
       setEditAddress(editingOrder.address);
+      setEditItems(editingOrder.items);
     }
   }, [editingOrder]);
   const filteredOrders = orders.filter((order) => {
@@ -484,7 +486,7 @@ ${order.status === 'pending'
             </h3>
 
             <div className="space-y-3">
-              {editingOrder.items.map((item) => (
+              {editItems.map((item) => (
                 <div
                   key={item.id}
                   className="border rounded-xl p-4 flex justify-between items-center"
@@ -502,6 +504,20 @@ ${order.status === 'pending'
                   <div className="flex items-center gap-3">
 
                     <button
+                      onClick={() => {
+                        setEditItems(prev =>
+                          prev
+                            .map(p =>
+                              p.id === item.id
+                                ? {
+                                  ...p,
+                                  quantity: p.quantity - 1,
+                                }
+                                : p
+                            )
+                            .filter(p => p.quantity > 0)
+                        );
+                      }}
                       className="w-8 h-8 rounded-full bg-red-100"
                     >
                       -
@@ -512,6 +528,18 @@ ${order.status === 'pending'
                     </span>
 
                     <button
+                      onClick={() => {
+                        setEditItems(prev =>
+                          prev.map(p =>
+                            p.id === item.id
+                              ? {
+                                ...p,
+                                quantity: p.quantity + 1,
+                              }
+                              : p
+                          )
+                        );
+                      }}
                       className="w-8 h-8 rounded-full bg-green-100"
                     >
                       +
@@ -521,9 +549,14 @@ ${order.status === 'pending'
                 </div>
               ))}
             </div>
-
+            <button
+              className="mt-5 w-full py-3 rounded-xl bg-brand-green text-white hover:bg-brand-gold transition-all"
+            >
+              + Ajouter un produit
+            </button>
           </div>
         </div>
+
       )}
     </div>
 
