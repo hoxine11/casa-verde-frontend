@@ -74,7 +74,14 @@ export default function AdminOrders({
 
     return matchesSearch && matchesStatus && matchesType;
   });
+  const editSubtotal = editItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
+  const deliveryFee = Number(editingOrder?.deliveryFee || 0);
+
+  const editTotal = editSubtotal + deliveryFee;
   return (
     <div className="space-y-8">
       {/* Title block */}
@@ -553,78 +560,187 @@ ${order.status === 'pending'
               ))}
             </div>
             <button
-             onClick={() => setShowAddProductModal(true)}
+              onClick={() => setShowAddProductModal(true)}
               className="mt-5 w-full py-3 rounded-xl bg-brand-green text-white hover:bg-brand-gold transition-all"
             >
               + Ajouter un produit
             </button>
+            <div className="border-t mt-6 pt-5 space-y-3">
+
+              <div className="flex justify-between text-lg">
+                <span>Sous-total</span>
+                <span>{editSubtotal} DA</span>
+              </div>
+
+              <div className="flex justify-between text-lg">
+                <span>Livraison</span>
+                <span>{deliveryFee} DA</span>
+              </div>
+
+              <div className="flex justify-between text-2xl font-bold text-brand-green border-t pt-4">
+                <span>TOTAL</span>
+                <span>{editTotal} DA</span>
+              </div>
+
+            </div>
+            <div className="flex justify-end gap-3 mt-8">
+
+              <button
+                onClick={() => setEditingOrder(null)}
+                className="px-6 py-3 rounded-xl border"
+              >
+                Annuler
+              </button>
+
+              <button
+                onClick={async () => {
+                  try {
+
+                    await fetch(
+                      `https://casa-verde-production-1d5f.up.railway.app/api/orders/${editingOrder?.id}`,
+                      {
+                        method: "PUT",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          customerName: editCustomerName,
+                          phone: editPhone,
+                          address: editAddress,
+
+                          items: editItems,
+
+                          subtotal: editSubtotal,
+                          total: editTotal,
+                        }),
+                      }
+                    );
+
+                    alert("Commande modifiée avec succès.");
+
+                    setEditingOrder(null);
+
+                    window.location.reload();
+
+                  } catch (err) {
+                    console.error(err);
+                    alert("Erreur lors de la modification.");
+                  }
+                }}
+                className="px-6 py-3 rounded-xl bg-brand-green text-white"
+              >
+                Enregistrer
+              </button>
+
+            </div>
           </div>
         </div>
 
       )}
       {showAddProductModal && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]">
 
-    <div className="bg-white rounded-2xl w-[600px] max-h-[80vh] overflow-auto p-6">
+          <div className="bg-white rounded-2xl w-[600px] max-h-[80vh] overflow-auto p-6">
 
-      <div className="flex justify-between items-center mb-5">
+            <div className="flex justify-between items-center mb-5">
 
-        <h2 className="text-xl font-bold text-brand-green">
-          Ajouter un produit
-        </h2>
+              <h2 className="text-xl font-bold text-brand-green">
+                Ajouter un produit
+              </h2>
 
-        <button
-          onClick={() => setShowAddProductModal(false)}
-          className="text-red-500 text-2xl"
-        >
-          ×
-        </button>
-
-      </div>
-
-      <input
-        type="text"
-        placeholder="Rechercher..."
-        className="w-full border rounded-xl px-4 py-3 mb-5"
-      />
-
-     <div className="space-y-2">
-
-    {products.map(product => (
-
-        <div
-            key={product.id}
-            className="flex justify-between items-center border rounded-xl p-3 hover:bg-gray-50 cursor-pointer"
-        >
-
-            <div>
-
-                <div className="font-semibold">
-                    {product.name}
-                </div>
-
-                <div className="text-sm text-gray-500">
-                    {product.price} DA
-                </div>
+              <button
+                onClick={() => setShowAddProductModal(false)}
+                className="text-red-500 text-2xl"
+              >
+                ×
+              </button>
 
             </div>
 
-            <button
-                className="px-3 py-1 rounded-lg bg-brand-green text-white"
-            >
-                Ajouter
-            </button>
+            <input
+              type="text"
+              placeholder="Rechercher..."
+              className="w-full border rounded-xl px-4 py-3 mb-5"
+            />
+
+            <div className="space-y-2">
+
+              {products.map(product => (
+
+                <div
+                  key={product.id}
+                  className="flex justify-between items-center border rounded-xl p-3 hover:bg-gray-50 cursor-pointer"
+                >
+
+                  <div>
+
+                    <div className="font-semibold">
+                      {product.name}
+                    </div>
+
+                    <div className="text-sm text-gray-500">
+                      {product.price} DA
+                    </div>
+
+                  </div>
+
+                  <button
+                    onClick={() => {
+
+                      setEditItems(prev => {
+
+                        const existing = prev.find(
+                          p =>
+                            p.productId === product.id.toString()
+                        );
+
+                        if (existing) {
+                          return prev.map(p =>
+                            p.productId === product.id.toString()
+                              ? {
+                                ...p,
+                                quantity: p.quantity + 1
+                              }
+                              : p
+                          );
+                        }
+
+                        return [
+                          ...prev,
+                          {
+                            id: Date.now(),
+                            productId: product.id.toString(),
+                            name: product.name,
+                            price: Number(product.price),
+                            quantity: 1,
+                            variant_name: "",
+                            option_name: "",
+                          }
+                        ];
+
+                      });
+
+                      setShowAddProductModal(false);
+
+                    }}
+
+                    className="px-3 py-1 rounded-lg bg-brand-green text-white"
+                  >
+                    Ajouter
+                  </button>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          </div>
 
         </div>
 
-    ))}
+      )}
 
-</div>
-
-    </div>
-
-  </div>
-)}
     </div>
 
   );
