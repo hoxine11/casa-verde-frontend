@@ -4,10 +4,10 @@
  */
 
 import { useState } from 'react';
-import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag } from 'lucide-react';
+import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag,Pencil } from 'lucide-react';
 import { Order } from '../types';
 import { printOrder } from "../utils/printOrder";
-import {  Settings } from "../types";
+import { Settings } from "../types";
 interface AdminOrdersProps {
   orders: Order[];
   onUpdateStatus: (
@@ -252,7 +252,15 @@ ${order.status === 'pending'
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </button>
-
+                        <button
+                          onClick={() => {
+                            setSelectedOrder(order);
+                          }}
+                          className="p-2 rounded-full transition-all border border-amber-200 bg-amber-50 hover:bg-amber-600 hover:text-white text-amber-600"
+                          title="Modifier la commande"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
                         <button
                           onClick={() => printOrder(order, settings.phone)}
                           disabled={order.status !== "confirmed"}
