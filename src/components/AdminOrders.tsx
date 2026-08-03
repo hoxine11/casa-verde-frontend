@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag,Pencil } from 'lucide-react';
+import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag, Pencil } from 'lucide-react';
 import { Order } from '../types';
 import { printOrder } from "../utils/printOrder";
 import { Settings } from "../types";
@@ -36,7 +36,7 @@ export default function AdminOrders({
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
-
+  const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const orderTypes = {
     delivery: { label: 'Livraison', icon: Truck, className: 'bg-sky-100 text-sky-800' },
     table: { label: 'Sur place', icon: Utensils, className: 'bg-violet-100 text-violet-800' },
@@ -254,7 +254,7 @@ ${order.status === 'pending'
                         </button>
                         <button
                           onClick={() => {
-                            setSelectedOrder(order);
+                            setEditingOrder(order);
                           }}
                           className="p-2 rounded-full transition-all border border-amber-200 bg-amber-50 hover:bg-amber-600 hover:text-white text-amber-600"
                           title="Modifier la commande"
@@ -411,7 +411,43 @@ ${order.status === 'pending'
           </div>
         </div>
       )}
+   {editingOrder && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl w-[700px] max-h-[90vh] overflow-auto p-6">
 
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">
+                Modifier la commande
+              </h2>
+
+              <button
+                onClick={() => setEditingOrder(null)}
+                className="text-red-500 font-bold text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p>
+              <strong>Commande :</strong> #{editingOrder.id}
+            </p>
+
+            <p>
+              <strong>Client :</strong> {editingOrder.customerName}
+            </p>
+
+            <p>
+              <strong>Téléphone :</strong> {editingOrder.phone}
+            </p>
+
+            <p>
+              <strong>Adresse :</strong> {editingOrder.address}
+            </p>
+
+          </div>
+        </div>
+      )}
     </div>
+
   );
 }
