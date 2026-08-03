@@ -46,6 +46,7 @@ export default function AdminOrders({
   const [editPhone, setEditPhone] = useState("");
   const [editAddress, setEditAddress] = useState("");
   const [editItems, setEditItems] = useState<OrderItem[]>([]);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
   useEffect(() => {
     if (editingOrder) {
       setEditCustomerName(editingOrder.customerName);
@@ -550,6 +551,7 @@ ${order.status === 'pending'
               ))}
             </div>
             <button
+             onClick={() => setShowAddProductModal(true)}
               className="mt-5 w-full py-3 rounded-xl bg-brand-green text-white hover:bg-brand-gold transition-all"
             >
               + Ajouter un produit
@@ -558,6 +560,40 @@ ${order.status === 'pending'
         </div>
 
       )}
+      {showAddProductModal && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]">
+
+    <div className="bg-white rounded-2xl w-[600px] max-h-[80vh] overflow-auto p-6">
+
+      <div className="flex justify-between items-center mb-5">
+
+        <h2 className="text-xl font-bold text-brand-green">
+          Ajouter un produit
+        </h2>
+
+        <button
+          onClick={() => setShowAddProductModal(false)}
+          className="text-red-500 text-2xl"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <input
+        type="text"
+        placeholder="Rechercher..."
+        className="w-full border rounded-xl px-4 py-3 mb-5"
+      />
+
+      <div className="text-gray-500 text-center py-10">
+        Les produits apparaîtront ici...
+      </div>
+
+    </div>
+
+  </div>
+)}
     </div>
 
   );
