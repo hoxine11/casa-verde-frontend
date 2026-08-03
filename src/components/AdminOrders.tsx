@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag, Pencil } from 'lucide-react';
 import { Order } from '../types';
 import { printOrder } from "../utils/printOrder";
@@ -42,7 +42,16 @@ export default function AdminOrders({
     table: { label: 'Sur place', icon: Utensils, className: 'bg-violet-100 text-violet-800' },
     pickup: { label: 'À emporter', icon: ShoppingBag, className: 'bg-amber-100 text-amber-800' },
   } as const;
-
+  const [editCustomerName, setEditCustomerName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editAddress, setEditAddress] = useState("");
+  useEffect(() => {
+    if (editingOrder) {
+      setEditCustomerName(editingOrder.customerName);
+      setEditPhone(editingOrder.phone);
+      setEditAddress(editingOrder.address);
+    }
+  }, [editingOrder]);
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       String(order.id).includes(searchQuery) ||
@@ -411,7 +420,7 @@ ${order.status === 'pending'
           </div>
         </div>
       )}
-   {editingOrder && (
+      {editingOrder && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-[700px] max-h-[90vh] overflow-auto p-6">
 
@@ -432,17 +441,86 @@ ${order.status === 'pending'
               <strong>Commande :</strong> #{editingOrder.id}
             </p>
 
-            <p>
-              <strong>Client :</strong> {editingOrder.customerName}
-            </p>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">
+                Client
+              </label>
 
-            <p>
-              <strong>Téléphone :</strong> {editingOrder.phone}
-            </p>
+              <input
+                type="text"
+                value={editCustomerName}
+                onChange={(e) => setEditCustomerName(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
 
-            <p>
-              <strong>Adresse :</strong> {editingOrder.address}
-            </p>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">
+                Téléphone
+              </label>
+
+              <input
+                type="text"
+                value={editPhone}
+                onChange={(e) => setEditPhone(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">
+                Adresse
+              </label>
+
+              <input
+                type="text"
+                value={editAddress}
+                onChange={(e) => setEditAddress(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
+            <h3 className="text-lg font-semibold mt-6 mb-3">
+              Produits
+            </h3>
+
+            <div className="space-y-3">
+              {editingOrder.items.map((item) => (
+                <div
+                  key={item.id}
+                  className="border rounded-xl p-4 flex justify-between items-center"
+                >
+                  <div>
+                    <div className="font-semibold">
+                      {item.name}
+                    </div>
+
+                    <div className="text-sm text-gray-500">
+                      {item.price} DA
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+
+                    <button
+                      className="w-8 h-8 rounded-full bg-red-100"
+                    >
+                      -
+                    </button>
+
+                    <span className="font-bold">
+                      {item.quantity}
+                    </span>
+
+                    <button
+                      className="w-8 h-8 rounded-full bg-green-100"
+                    >
+                      +
+                    </button>
+
+                  </div>
+                </div>
+              ))}
+            </div>
 
           </div>
         </div>
