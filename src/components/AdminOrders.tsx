@@ -595,7 +595,8 @@ ${order.status === 'pending'
               <button
                 onClick={async () => {
                   try {
-
+                    console.log("SENDING ITEMS");
+                    console.log(JSON.stringify(editItems, null, 2));
                     await fetch(
                       `https://casa-verde-production-1d5f.up.railway.app/api/orders/${editingOrder?.id}`,
                       {
