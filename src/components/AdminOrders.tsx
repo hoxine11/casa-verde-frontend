@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import { toast } from "sonner";
 import { useState, useEffect } from 'react';
 import { Search, Eye, Phone, Trash2, SlidersHorizontal, Truck, Utensils, ShoppingBag, Pencil } from 'lucide-react';
 import { Order, OrderItem, Product } from '../types';
@@ -617,15 +617,14 @@ ${order.status === 'pending'
                       }
                     );
 
-                    alert("Commande modifiée avec succès.");
-
+                    toast.success("Commande modifiée avec succès.");
                     setEditingOrder(null);
 
                     window.location.reload();
 
                   } catch (err) {
                     console.error(err);
-                    alert("Erreur lors de la modification.");
+                    toast.error("Erreur lors de la modification.");
                   }
                 }}
                 className="px-6 py-3 rounded-xl bg-brand-green text-white"

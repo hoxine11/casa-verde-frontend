@@ -28,6 +28,7 @@
     "react-dom": "^19.0.1",
     "recharts": "^3.8.1",
     "socket.io-client": "^4.8.3",
+    "sonner": "^2.0.7",
     "vite": "^6.2.3"
   },
   "devDependencies": {
@@ -41,7 +42,6 @@
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2"
-   
   },
   "description": "<div align=\"center\"> <img width=\"1200\" height=\"475\" alt=\"GHBanner\" src=\"https://ai.google.dev/static/site-assets/images/share-ais-513315318.png\" /> </div>",
   "main": "index.js",

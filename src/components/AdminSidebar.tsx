@@ -12,7 +12,8 @@ import {
   BarChart3,
   Flame,
   ArrowLeft,
-  LogOut
+  LogOut,
+  Receipt
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -77,6 +78,11 @@ export default function AdminSidebar({
       label: 'Paramètres',
       icon: Settings,
       badge: null
+    },
+    {
+      id: "cash-history",
+      label: "Clôtures",
+      icon: Receipt,
     }
   ];
 
@@ -109,29 +115,26 @@ export default function AdminSidebar({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex items-center justify-between w-full px-4 py-3 rounded-none font-sans text-[10px] font-bold tracking-wider uppercase transition-all duration-300 group cursor-pointer border-b border-brand-ivory/5 last:border-0 ${
-                isActive
+              className={`flex items-center justify-between w-full px-4 py-3 rounded-none font-sans text-[10px] font-bold tracking-wider uppercase transition-all duration-300 group cursor-pointer border-b border-brand-ivory/5 last:border-0 ${isActive
                   ? 'bg-brand-gold text-brand-green-dark shadow-sm'
                   : 'text-brand-ivory/70 hover:text-brand-ivory hover:bg-brand-ivory/5'
-              }`}
+                }`}
             >
               <div className="flex items-center space-x-3.5">
                 <IconComponent
-                  className={`w-4 h-4 transition-transform duration-300 group-hover:scale-110 shrink-0 ${
-                    isActive ? 'text-brand-green-dark' : 'text-brand-ivory/50 group-hover:text-brand-ivory'
-                  }`}
+                  className={`w-4 h-4 transition-transform duration-300 group-hover:scale-110 shrink-0 ${isActive ? 'text-brand-green-dark' : 'text-brand-ivory/50 group-hover:text-brand-ivory'
+                    }`}
                 />
                 <span>{item.label}</span>
               </div>
-              
+
               {/* Optional pending order bubble counter badge */}
               {item.badge !== null && (
                 <span
-                  className={`text-[9px] font-bold px-2 py-0.5 rounded-none border shrink-0 ${
-                    isActive
+                  className={`text-[9px] font-bold px-2 py-0.5 rounded-none border shrink-0 ${isActive
                       ? 'bg-brand-green text-brand-ivory border-brand-green'
                       : 'bg-brand-gold text-brand-green-dark border-brand-gold'
-                  }`}
+                    }`}
                 >
                   {item.badge}
                 </span>

@@ -115,3 +115,16 @@ export interface CrepeFormula {
   name: string;
   price: number;
 }
+export interface CashSession {
+  id: number;
+
+  opened_at: string;
+  closed_at: string;
+
+  total_orders: number;
+
+  total_sales: number;
+  total_delivery: number;
+
+  grand_total: number;
+}

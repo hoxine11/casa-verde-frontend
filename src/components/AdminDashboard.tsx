@@ -2,23 +2,26 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import React, { useState } from 'react';
 import { TrendingUp, Clock, CheckCircle2, Check, Wallet, CalendarRange } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Order } from '../types';
+import { Order, Settings } from '../types';
 
 interface AdminDashboardProps {
   orders: Order[];
+  settings: Settings;
+  onUpdateSettings: (settings: Settings) => void;
   onViewOrder: (order: Order) => void;
 }
 
-export default function AdminDashboard({ orders, onViewOrder }: AdminDashboardProps) {
+export default function AdminDashboard({ orders, settings, onUpdateSettings, onViewOrder }: AdminDashboardProps) {
   // Aggregate stats
   const totalOrders = orders.length;
   const pendingOrders = orders.filter((o) => o.status === 'pending').length;
   const confirmedOrders = orders.filter((o) => o.status === 'confirmed').length;
   const deliveredOrders = orders.filter((o) => o.status === 'delivered').length;
-
+  const [showCloseModal, setShowCloseModal] = useState(false);
+  const [closingReport, setClosingReport] = useState<any>(null);
   // Revenue computations
   const today = new Date();
 
@@ -26,7 +29,7 @@ export default function AdminDashboard({ orders, onViewOrder }: AdminDashboardPr
     .filter((o) => {
       if (o.status !== "delivered") return false;
 
-     const orderDate = new Date(o.created_at);
+      const orderDate = new Date(o.created_at);
 
       return (
         orderDate.getDate() === today.getDate() &&
@@ -40,7 +43,7 @@ export default function AdminDashboard({ orders, onViewOrder }: AdminDashboardPr
     .filter((o) => {
       if (o.status === "cancelled") return false;
 
-     const orderDate = new Date(o.created_at);
+      const orderDate = new Date(o.created_at);
 
       return (
         orderDate.getMonth() === today.getMonth() &&
@@ -80,12 +83,98 @@ export default function AdminDashboard({ orders, onViewOrder }: AdminDashboardPr
       color: 'bg-teal-500/10 text-teal-600 border-teal-500/15',
     }
   ];
+  const [loadingRestaurant, setLoadingRestaurant] = useState(false);
+  const toggleRestaurant = async () => {
+    try {
+      setLoadingRestaurant(true);
 
+      const url = settings.is_open
+        ? "https://casa-verde-production-1d5f.up.railway.app/api/cash/close"
+        : "https://casa-verde-production-1d5f.up.railway.app/api/cash/open";
+
+      if (settings.is_open) {
+
+        const response = await fetch(
+          "https://casa-verde-production-1d5f.up.railway.app/api/cash/preview"
+        );
+
+        const data = await response.json();
+
+        setClosingReport(data);
+
+        setShowCloseModal(true);
+
+      } else {
+
+        await fetch(
+          "https://casa-verde-production-1d5f.up.railway.app/api/cash/open",
+          {
+            method: "POST"
+          }
+        );
+
+      }
+
+      const response = await fetch(
+        "https://casa-verde-production-1d5f.up.railway.app/api/settings"
+      );
+
+      const data = await response.json();
+
+      onUpdateSettings({
+        restaurantName: data.restaurant_name,
+        phone: data.phone,
+        address: data.address,
+        deliveryFee: data.delivery_fee,
+        facebook: data.facebook,
+        instagram: data.instagram,
+        is_open: data.is_open,
+      });
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingRestaurant(false);
+    }
+  };
   return (
     <div className="space-y-8">
       {/* Title block */}
       <div>
         <h1 className="font-serif text-3xl font-bold text-brand-green">Tableau de bord</h1>
+        <div className="bg-brand-ivory rounded-3xl border border-brand-green/15 p-6 shadow-sm flex items-center justify-between">
+
+          <div>
+            <h2 className="text-2xl font-bold text-brand-green">
+              {settings.is_open
+                ? "🟢 Restaurant ouvert"
+                : "🔴 Restaurant fermé"}
+            </h2>
+
+            <p className="text-sm text-brand-green/70 mt-2">
+              {settings.is_open
+                ? "Le restaurant accepte actuellement les commandes."
+                : "Le restaurant est actuellement fermé."}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            disabled={loadingRestaurant}
+            onClick={toggleRestaurant}
+            className={`px-6 py-3 rounded-xl font-semibold text-white transition-all ${settings.is_open
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-emerald-600 hover:bg-emerald-700"
+              }`}
+          >
+            {loadingRestaurant
+              ? "..."
+              : settings.is_open
+                ? "Fermer le restaurant"
+                : "Ouvrir le restaurant"}
+          </button>
+
+        </div>
         <p className="font-sans text-xs font-light text-brand-green/70 mt-1">
           Suivi en temps réel de l'activité commerciale de Casa Verde.
         </p>
@@ -277,6 +366,102 @@ export default function AdminDashboard({ orders, onViewOrder }: AdminDashboardPr
         </div>
 
       </div>
+      {showCloseModal && closingReport && (
+
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[999]">
+
+          <div className="bg-white rounded-3xl w-[520px] p-8">
+
+            <h2 className="text-3xl font-bold text-brand-green text-center">
+              Clôture de journée
+            </h2>
+
+            <div className="mt-8 space-y-4">
+
+              <div className="flex justify-between">
+                <span>Commandes</span>
+                <strong>{closingReport.totalOrders}</strong>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Ventes</span>
+                <strong>{closingReport.totalSales.toLocaleString()} DA</strong>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Livraison</span>
+                <strong>{closingReport.totalDelivery.toLocaleString()} DA</strong>
+              </div>
+
+              <div className="border-t pt-5 flex justify-between text-2xl font-bold text-brand-green">
+
+                <span>TOTAL</span>
+
+                <span>{closingReport.grandTotal.toLocaleString()} DA</span>
+
+              </div>
+
+            </div>
+
+            <div className="flex justify-end mt-8">
+              <button
+                className="px-6 py-3 rounded-xl border border-gray-300 hover:bg-gray-100"
+                onClick={() => {
+                  setShowCloseModal(false);
+                  setClosingReport(null);
+                }}
+              >
+                Annuler
+              </button>
+              <button
+                className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold"
+                onClick={async () => {
+
+                  const response = await fetch(
+                    "https://casa-verde-production-1d5f.up.railway.app/api/cash/close",
+                    {
+                      method: "POST",
+                    }
+                  );
+
+                  const result = await response.json();
+
+                  if (result.error) {
+                    console.error(result.error);
+                    return;
+                  }
+
+                  const settingsResponse = await fetch(
+                    "https://casa-verde-production-1d5f.up.railway.app/api/settings"
+                  );
+
+                  const s = await settingsResponse.json();
+
+                  onUpdateSettings({
+                    restaurantName: s.restaurant_name,
+                    phone: s.phone,
+                    address: s.address,
+                    deliveryFee: s.delivery_fee,
+                    facebook: s.facebook,
+                    instagram: s.instagram,
+                    is_open: s.is_open,
+                  });
+
+                  setShowCloseModal(false);
+                  setClosingReport(null);
+
+                }}
+              >
+                Confirmer la clôture
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
     </div>
   );
 }

@@ -28,8 +28,8 @@ import {
 import { useRef } from "react";
 
 // Types imports
-import { Product, Category, CartItem, Order, Settings, OrderItem } from './types';
-
+import { Product, Category, CartItem, Order, Settings, OrderItem, CashSession, } from './types';
+import AdminCashHistory from "./components/AdminCashHistory";
 // Subcomponents imports
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -82,7 +82,18 @@ export default function App() {
         "token"
       );
     });
+  const [cashHistory, setCashHistory] = useState<CashSession[]>([]);
+  const loadCashHistory = async () => {
 
+    const response = await fetch(
+      "https://casa-verde-production-1d5f.up.railway.app/api/cash/history"
+    );
+
+    const data = await response.json();
+
+    setCashHistory(data);
+
+  };
   // Dynamic routing & URL syncing
   useEffect(() => {
     const handleUrlSync = () => {
@@ -193,6 +204,7 @@ export default function App() {
   useEffect(() => {
     refreshCategories();
     refreshProducts();
+    loadCashHistory();
   }, []);
 
   const [orders, setOrders] = useState<Order[]>([]);
@@ -1679,9 +1691,11 @@ export default function App() {
                   {activeAdminTab === 'dashboard' && (
                     <AdminDashboard
                       orders={orders}
+                      settings={settings}
+                      onUpdateSettings={setSettings}
                       onViewOrder={(order) => {
                         setActiveSelectedOrderPanel(order);
-                        setActiveAdminTab('orders');
+                        setActiveAdminTab("orders");
                       }}
                     />
                   )}
@@ -1731,6 +1745,11 @@ export default function App() {
                     <AdminSettings
                       settings={settings}
                       onUpdateSettings={setSettings}
+                    />
+                  )}
+                  {activeAdminTab === "cash-history" && (
+                    <AdminCashHistory
+                      history={cashHistory}
                     />
                   )}
 
