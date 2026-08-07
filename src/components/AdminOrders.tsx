@@ -11,6 +11,7 @@ import { Settings } from "../types";
 interface AdminOrdersProps {
   orders: Order[];
   products: Product[];
+
   onUpdateStatus: (
     id: number,
     status: Order["status"]
@@ -24,6 +25,8 @@ interface AdminOrdersProps {
   setSelectedOrder: (order: Order | null) => void;
 
   settings: Settings;
+
+  refreshOrders: () => Promise<void>;
 }
 
 export default function AdminOrders({
@@ -33,7 +36,8 @@ export default function AdminOrders({
   selectedOrder,
   setSelectedOrder,
   settings,
-  products
+  products,
+  refreshOrders
 }: AdminOrdersProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -620,7 +624,9 @@ ${order.status === 'pending'
                     toast.success("Commande modifiée avec succès.");
                     setEditingOrder(null);
 
-                    window.location.reload();
+                    await refreshOrders();
+
+                    setEditingOrder(null);
 
                   } catch (err) {
                     console.error(err);

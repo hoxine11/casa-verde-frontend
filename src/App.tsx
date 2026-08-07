@@ -1709,6 +1709,7 @@ export default function App() {
                       setSelectedOrder={setActiveSelectedOrderPanel}
                       settings={settings}
                       products={products}
+                      refreshOrders={refreshOrders}
                     />
                   )}
 
