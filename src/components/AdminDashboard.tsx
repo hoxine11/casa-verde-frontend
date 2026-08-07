@@ -95,23 +95,36 @@ export default function AdminDashboard({ orders, settings, onUpdateSettings, onV
       if (settings.is_open) {
 
         const response = await fetch(
-          "https://casa-verde-production-1d5f.up.railway.app/api/cash/preview"
-        );
+  "https://casa-verde-production-1d5f.up.railway.app/api/cash/preview"
+);
 
-        const data = await response.json();
+const data = await response.json();
 
-        setClosingReport(data);
+if (!response.ok) {
+  console.error(data);
+  return;
+}
 
-        setShowCloseModal(true);
+setClosingReport(data);
+setShowCloseModal(true);
 
       } else {
 
-        await fetch(
+        const response = await fetch(
           "https://casa-verde-production-1d5f.up.railway.app/api/cash/open",
           {
-            method: "POST"
+            method: "POST",
           }
         );
+
+        const result = await response.json();
+
+        console.log(result);
+
+        if (!response.ok) {
+          console.error(result);
+          return;
+        }
 
       }
 
@@ -385,19 +398,19 @@ export default function AdminDashboard({ orders, settings, onUpdateSettings, onV
 
               <div className="flex justify-between">
                 <span>Ventes</span>
-                <strong>{closingReport.totalSales.toLocaleString()} DA</strong>
+                <strong>{Number(closingReport.totalSales ?? 0).toLocaleString()} DA</strong>
               </div>
 
               <div className="flex justify-between">
                 <span>Livraison</span>
-                <strong>{closingReport.totalDelivery.toLocaleString()} DA</strong>
+                <strong>{Number(closingReport.totalDelivery ?? 0).toLocaleString()} DA</strong>
               </div>
 
               <div className="border-t pt-5 flex justify-between text-2xl font-bold text-brand-green">
 
                 <span>TOTAL</span>
 
-                <span>{closingReport.grandTotal.toLocaleString()} DA</span>
+                <span>{Number(closingReport.grandTotal ?? 0).toLocaleString()} DA</span>
 
               </div>
 
