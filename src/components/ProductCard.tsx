@@ -40,6 +40,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView, setting
     category === "sandwitch";
   const isTacos =
     category === "tacos";
+    const isBurger =
+  category === "burger";
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
   const [selectedOptions, setSelectedOptions] =
@@ -62,7 +64,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, setting
     ) +
     Number(selectedFormula?.price || 0)
     +
-    (isTacos
+    ((isTacos || isBurger)
   ? Number(selectedGratine?.price || 0) +
     selectedSupplements.reduce(
       (sum, option) => sum + Number(option.price),
@@ -239,7 +241,7 @@ export default function ProductCard({ product, onAddToCart, onQuickView, setting
 
 {/* ==================== TACOS ==================== */}
 
-{isTacos && (
+{(isTacos || isBurger) && (
   <>
 
     {/* Gratiné */}
