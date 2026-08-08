@@ -6,7 +6,7 @@
 import { Plus, Eye } from 'lucide-react';
 import { CrepeFormula, CrepeStepItem, ProductOption } from '../types';
 import { motion } from 'motion/react';
-import { Product ,Settings} from '../types';
+import { Product, Settings } from '../types';
 import { useState } from 'react';
 interface ProductCardProps {
   product: Product;
@@ -16,12 +16,15 @@ interface ProductCardProps {
   settings: Settings;
 }
 
-export default function ProductCard({ product, onAddToCart, onQuickView ,settings}: ProductCardProps) {
+export default function ProductCard({ product, onAddToCart, onQuickView, settings }: ProductCardProps) {
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants?.[0] || null
   );
   const [selectedOption, setSelectedOption] =
     useState<ProductOption | null>(null);
+  const [selectedGratine, setSelectedGratine] = useState<any | null>(null);
+
+  const [selectedSupplements, setSelectedSupplements] = useState<any[]>([]);
   const [selectedCrepeSteps, setSelectedCrepeSteps] =
     useState<CrepeStepItem[]>([]);
   const [crepeMode, setCrepeMode] = useState<
@@ -57,7 +60,15 @@ export default function ProductCard({ product, onAddToCart, onQuickView ,setting
       (sum, step) => sum + Number(step.price),
       0
     ) +
-    Number(selectedFormula?.price || 0);
+    Number(selectedFormula?.price || 0)
+    +
+    (isTacos
+  ? Number(selectedGratine?.price || 0) +
+    selectedSupplements.reduce(
+      (sum, option) => sum + Number(option.price),
+      0
+    )
+  : 0);
   const stepNumbers = [
     ...new Set(
       (product.crepeSteps || []).map(
@@ -72,6 +83,14 @@ export default function ProductCard({ product, onAddToCart, onQuickView ,setting
         (selectedVariant?.name || "M")
     )
     : product.options || [];
+  const gratineOptions = displayedOptions.filter(option =>
+    option.name.toLowerCase().startsWith("gratin")
+  );
+
+  const supplementOptions = displayedOptions.filter(option =>
+    option.name.toLowerCase().startsWith("suppl")
+  );
+
   console.log(product);
   return (
     <motion.div
@@ -171,57 +190,163 @@ export default function ProductCard({ product, onAddToCart, onQuickView ,setting
                 Aucune
               </button>
 
-              {displayedOptions.map((option) => {
+{/* Options classiques : Sandwich */}
+{!isTacos && displayedOptions.map((option) => {
 
-                const isSelected = isSandwich
-                  ? selectedOptions.some(o => o.id === option.id)
-                  : selectedOption?.id === option.id;
+  const isSelected = isSandwich
+    ? selectedOptions.some(o => o.id === option.id)
+    : selectedOption?.id === option.id;
 
-                return (
+  return (
+    <button
+      key={option.id}
+      type="button"
+      onClick={() => {
 
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => {
+        if (isSandwich) {
 
-                      if (isSandwich) {
+          if (isSelected) {
+            setSelectedOptions(prev =>
+              prev.filter(o => o.id !== option.id)
+            );
+          } else {
+            setSelectedOptions(prev => [
+              ...prev,
+              option
+            ]);
+          }
 
-                        if (isSelected) {
+        } else {
+          setSelectedOption(option);
+        }
 
-                          setSelectedOptions(prev =>
-                            prev.filter(o => o.id !== option.id)
-                          );
+      }}
+      className={`px-3 py-1 border rounded text-xs ${
+        isSelected
+          ? "bg-brand-green text-white"
+          : "bg-white"
+      }`}
+    >
+      {option.name}
 
-                        } else {
+      <span className="ml-1 text-[10px]">
+        +{option.price}
+      </span>
+    </button>
+  );
+})}
 
-                          setSelectedOptions(prev => [
-                            ...prev,
-                            option
-                          ]);
 
-                        }
+{/* ==================== TACOS ==================== */}
 
-                      } else {
+{isTacos && (
+  <>
 
-                        setSelectedOption(option);
+    {/* Gratiné */}
+    {gratineOptions.length > 0 && (
+      <div className="mt-5">
 
-                      }
+        <h3 className="font-semibold text-brand-green mb-3">
+          Gratiné
+        </h3>
 
-                    }}
-                    className={`px-3 py-1 border rounded text-xs ${isSelected
-                      ? "bg-brand-green text-white"
-                      : "bg-white"
-                      }`}
-                  >
-                    {option.name}
-                    <span className="ml-1 text-[10px]">
-                      +{option.price}
-                    </span>
-                  </button>
+        <div className="flex flex-wrap gap-2">
 
-                );
+          {gratineOptions.map((option) => {
 
-              })}
+            const isSelected =
+              selectedGratine?.id === option.id;
+
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => {
+                  setSelectedGratine(
+                    isSelected ? null : option
+                  );
+                }}
+                className={`px-3 py-2 border rounded-lg text-xs ${
+                  isSelected
+                    ? "bg-brand-green text-white"
+                    : "bg-white"
+                }`}
+              >
+                {option.name.replace(/^gratiné\s*/i, "")}
+
+                <span className="ml-1 text-[10px]">
+                  +{Number(option.price).toLocaleString()} DA
+                </span>
+              </button>
+            );
+
+          })}
+
+        </div>
+
+      </div>
+    )}
+
+
+    {/* Suppléments */}
+    {supplementOptions.length > 0 && (
+      <div className="mt-5">
+
+        <h3 className="font-semibold text-brand-green mb-3">
+          Suppléments
+        </h3>
+
+        <div className="flex flex-wrap gap-2">
+
+          {supplementOptions.map((option) => {
+
+            const isSelected =
+              selectedSupplements.some(
+                item => item.id === option.id
+              );
+
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => {
+
+                  setSelectedSupplements(prev => {
+
+                    if (isSelected) {
+                      return prev.filter(
+                        item => item.id !== option.id
+                      );
+                    }
+
+                    return [...prev, option];
+
+                  });
+
+                }}
+                className={`px-3 py-2 border rounded-lg text-xs ${
+                  isSelected
+                    ? "bg-brand-green text-white"
+                    : "bg-white"
+                }`}
+              >
+                {option.name.replace(/^supplément\s*/i, "")}
+
+                <span className="ml-1 text-[10px]">
+                  +{Number(option.price).toLocaleString()} DA
+                </span>
+              </button>
+            );
+
+          })}
+
+        </div>
+
+      </div>
+    )}
+
+  </>
+)}
             </div>
           </div>
         )}
@@ -380,33 +505,32 @@ export default function ProductCard({ product, onAddToCart, onQuickView ,setting
             <span className="font-sans text-[10px] font-bold text-brand-gold ml-1 tracking-wider">DZD</span>
           </div>
 
-         <motion.button
-  disabled={!settings?.is_open}
-  whileTap={{ scale: 0.97 }}
-  onClick={() => {
-    if (!settings?.is_open) return;
+          <motion.button
+            disabled={!settings?.is_open}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => {
+              if (!settings?.is_open) return;
 
-    onAddToCart({
-      ...product,
-      selectedVariant,
-      selectedOptions: isSandwich
-        ? selectedOptions
-        : selectedOption
-          ? [selectedOption]
-          : [],
-      selectedCrepeSteps,
-      selectedFormula,
-      price: finalPrice,
-    });
-  }}
-  className={`px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border ${
-    settings?.is_open
-      ? "bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
-      : "bg-gray-400 text-white border-gray-400 cursor-not-allowed"
-  }`}
->
-  {settings?.is_open ? "Ajouter" : "Restaurant fermé"}
-</motion.button>
+              onAddToCart({
+                ...product,
+                selectedVariant,
+                selectedOptions: isSandwich
+                  ? selectedOptions
+                  : selectedOption
+                    ? [selectedOption]
+                    : [],
+                selectedCrepeSteps,
+                selectedFormula,
+                price: finalPrice,
+              });
+            }}
+            className={`px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border ${settings?.is_open
+                ? "bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
+                : "bg-gray-400 text-white border-gray-400 cursor-not-allowed"
+              }`}
+          >
+            {settings?.is_open ? "Ajouter" : "Restaurant fermé"}
+          </motion.button>
         </div>
       </div>
     </motion.div>
