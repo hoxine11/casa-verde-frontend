@@ -2,29 +2,43 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
 export interface Product {
   id: number;
+
   name: string;
+
   description: string;
+
   image_url: string;
+
   price: number;
+
   is_active: boolean;
+
   category: string;
+
   category_id: number;
 
   variants?: ProductVariant[];
+
   options?: ProductOption[];
 
   crepeSteps?: CrepeStepItem[];
+
   crepeFormulas?: CrepeFormula[];
 
   selectedVariant?: ProductVariant | null;
+
+  // Tacos / Burger
+  selectedGratine?: ProductOption | null;
+
+  selectedSupplements?: ProductOption[];
 
   // Sélection multiple
   selectedOptions?: ProductOption[];
 
   selectedCrepeSteps?: CrepeStepItem[];
+
   selectedFormula?: CrepeFormula | null;
 }
 export interface Category {

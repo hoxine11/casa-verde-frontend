@@ -6,7 +6,7 @@
 import { X, Plus, Clock, ShieldAlert } from 'lucide-react';
 import { motion } from 'motion/react';
 
-import { Product, ProductVariant, ProductOption, CrepeFormula, CrepeStepItem , Settings} from '../types';
+import { Product, ProductVariant, ProductOption, CrepeFormula, CrepeStepItem, Settings } from '../types';
 import { useState, useEffect } from 'react';
 
 interface QuickViewModalProps {
@@ -24,7 +24,7 @@ export default function QuickViewModal({
   onAddToCart,
   settings
 }: QuickViewModalProps) {
-console.log("QuickView settings:", settings);
+  console.log("QuickView settings:", settings);
   const [variants, setVariants] =
     useState<ProductVariant[]>([]);
 
@@ -38,7 +38,8 @@ console.log("QuickView settings:", settings);
     useState<ProductOption[]>([]);
   const [selectedCrepeSteps, setSelectedCrepeSteps] =
     useState<CrepeStepItem[]>([]);
-
+const [selectedSupplements, setSelectedSupplements] = useState<ProductOption[]>([]);
+const [selectedGratine, setSelectedGratine] = useState<ProductOption | null>(null);
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
   const [customizationMode, setCustomizationMode] = useState<
@@ -405,6 +406,8 @@ console.log("QuickView settings:", settings);
                       selectedVariant,
                       selectedOptions,
                       selectedCrepeSteps,
+                      selectedGratine,
+                      selectedSupplements,
                       selectedFormula,
 
                       price:

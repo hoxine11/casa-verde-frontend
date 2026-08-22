@@ -326,67 +326,107 @@ export default function App() {
   }, [cartSubtotal]);
 
   // Handle Cart operators
-  const handleAddToCart = (product: Product) => {
-    console.log("ADDING PRODUCT =", product);
+ const handleAddToCart = (product: Product) => {
+  console.log("ADDING PRODUCT =", product);
 
-    setCart((prev) => {
-      const exists = prev.find(
-        (item) =>
-          item.product.id === product.id &&
-          item.product.selectedVariant?.id === product.selectedVariant?.id &&
-          JSON.stringify(item.product.selectedOptions) ===
-          JSON.stringify(product.selectedOptions) &&
-          JSON.stringify(item.product.selectedCrepeSteps) ===
-          JSON.stringify(product.selectedCrepeSteps) &&
-          item.product.selectedFormula?.id ===
-          product.selectedFormula?.id
+  setCart((prev) => {
+    const exists = prev.find((item) => {
+      const sameProduct =
+        item.product.id === product.id;
+
+      const sameVariant =
+        item.product.selectedVariant?.id ===
+        product.selectedVariant?.id;
+
+      const sameOptions =
+        JSON.stringify(item.product.selectedOptions) ===
+        JSON.stringify(product.selectedOptions);
+
+      const sameGratine =
+        item.product.selectedGratine?.id ===
+        product.selectedGratine?.id;
+
+      const sameSupplements =
+        JSON.stringify(item.product.selectedSupplements) ===
+        JSON.stringify(product.selectedSupplements);
+
+      const sameCrepeSteps =
+        JSON.stringify(item.product.selectedCrepeSteps) ===
+        JSON.stringify(product.selectedCrepeSteps);
+
+      const sameFormula =
+        item.product.selectedFormula?.id ===
+        product.selectedFormula?.id;
+
+      return (
+        sameProduct &&
+        sameVariant &&
+        sameOptions &&
+        sameGratine &&
+        sameSupplements &&
+        sameCrepeSteps &&
+        sameFormula
       );
-      if (exists) {
-        return prev.map((item) => {
-          const sameProduct =
-            item.product.id === product.id;
-
-          const sameVariant =
-            item.product.selectedVariant?.id ===
-            product.selectedVariant?.id;
-
-          const sameOptions =
-            JSON.stringify(item.product.selectedOptions) ===
-            JSON.stringify(product.selectedOptions);
-          const sameCrepeSteps =
-            JSON.stringify(item.product.selectedCrepeSteps) ===
-            JSON.stringify(product.selectedCrepeSteps);
-
-          const sameFormula =
-            item.product.selectedFormula?.id ===
-            product.selectedFormula?.id;
-
-          if (
-            sameProduct &&
-            sameVariant &&
-            sameOptions &&
-            sameCrepeSteps &&
-            sameFormula
-          ) {
-            return {
-              ...item,
-              quantity: item.quantity + 1
-            };
-          }
-
-          return item;
-        });
-      }
-      return [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          product: structuredClone(product),
-          quantity: 1,
-        },
-      ];
     });
-  };
+
+    if (exists) {
+      return prev.map((item) => {
+        const sameProduct =
+          item.product.id === product.id;
+
+        const sameVariant =
+          item.product.selectedVariant?.id ===
+          product.selectedVariant?.id;
+
+        const sameOptions =
+          JSON.stringify(item.product.selectedOptions) ===
+          JSON.stringify(product.selectedOptions);
+
+        const sameGratine =
+          item.product.selectedGratine?.id ===
+          product.selectedGratine?.id;
+
+        const sameSupplements =
+          JSON.stringify(item.product.selectedSupplements) ===
+          JSON.stringify(product.selectedSupplements);
+
+        const sameCrepeSteps =
+          JSON.stringify(item.product.selectedCrepeSteps) ===
+          JSON.stringify(product.selectedCrepeSteps);
+
+        const sameFormula =
+          item.product.selectedFormula?.id ===
+          product.selectedFormula?.id;
+
+        if (
+          sameProduct &&
+          sameVariant &&
+          sameOptions &&
+          sameGratine &&
+          sameSupplements &&
+          sameCrepeSteps &&
+          sameFormula
+        ) {
+          return {
+            ...item,
+            quantity: item.quantity + 1,
+          };
+        }
+
+        return item;
+      });
+    }
+
+    return [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        product: structuredClone(product),
+        quantity: 1,
+      },
+    ];
+  });
+};
 
   const handleUpdateCartQuantity = (id: string, delta: number) => {
     setCart(prev =>
