@@ -38,8 +38,7 @@ export default function QuickViewModal({
     useState<ProductOption[]>([]);
   const [selectedCrepeSteps, setSelectedCrepeSteps] =
     useState<CrepeStepItem[]>([]);
-const [selectedSupplements, setSelectedSupplements] = useState<ProductOption[]>([]);
-const [selectedGratine, setSelectedGratine] = useState<ProductOption | null>(null);
+
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
   const [customizationMode, setCustomizationMode] = useState<
@@ -406,8 +405,7 @@ const [selectedGratine, setSelectedGratine] = useState<ProductOption | null>(nul
                       selectedVariant,
                       selectedOptions,
                       selectedCrepeSteps,
-                      selectedGratine,
-                      selectedSupplements,
+
                       selectedFormula,
 
                       price:

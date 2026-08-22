@@ -40,8 +40,8 @@ export default function ProductCard({ product, onAddToCart, onQuickView, setting
     category === "sandwitch";
   const isTacos =
     category === "tacos";
-    const isBurger =
-  category === "burger";
+  const isBurger =
+    category === "burger";
   const [selectedFormula, setSelectedFormula] =
     useState<CrepeFormula | null>(null);
   const [selectedOptions, setSelectedOptions] =
@@ -65,12 +65,12 @@ export default function ProductCard({ product, onAddToCart, onQuickView, setting
     Number(selectedFormula?.price || 0)
     +
     ((isTacos || isBurger)
-  ? Number(selectedGratine?.price || 0) +
-    selectedSupplements.reduce(
-      (sum, option) => sum + Number(option.price),
-      0
-    )
-  : 0);
+      ? Number(selectedGratine?.price || 0) +
+      selectedSupplements.reduce(
+        (sum, option) => sum + Number(option.price),
+        0
+      )
+      : 0);
   const stepNumbers = [
     ...new Set(
       (product.crepeSteps || []).map(
@@ -192,163 +192,160 @@ export default function ProductCard({ product, onAddToCart, onQuickView, setting
                 Aucune
               </button>
 
-{/* Options classiques : Sandwich */}
-{!isTacos && displayedOptions.map((option) => {
+              {/* Options classiques : Sandwich */}
+              {!isTacos && displayedOptions.map((option) => {
 
-  const isSelected = isSandwich
-    ? selectedOptions.some(o => o.id === option.id)
-    : selectedOption?.id === option.id;
+                const isSelected = isSandwich
+                  ? selectedOptions.some(o => o.id === option.id)
+                  : selectedOption?.id === option.id;
 
-  return (
-    <button
-      key={option.id}
-      type="button"
-      onClick={() => {
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => {
 
-        if (isSandwich) {
+                      if (isSandwich) {
 
-          if (isSelected) {
-            setSelectedOptions(prev =>
-              prev.filter(o => o.id !== option.id)
-            );
-          } else {
-            setSelectedOptions(prev => [
-              ...prev,
-              option
-            ]);
-          }
+                        if (isSelected) {
+                          setSelectedOptions(prev =>
+                            prev.filter(o => o.id !== option.id)
+                          );
+                        } else {
+                          setSelectedOptions(prev => [
+                            ...prev,
+                            option
+                          ]);
+                        }
 
-        } else {
-          setSelectedOption(option);
-        }
+                      } else {
+                        setSelectedOption(option);
+                      }
 
-      }}
-      className={`px-3 py-1 border rounded text-xs ${
-        isSelected
-          ? "bg-brand-green text-white"
-          : "bg-white"
-      }`}
-    >
-      {option.name}
+                    }}
+                    className={`px-3 py-1 border rounded text-xs ${isSelected
+                        ? "bg-brand-green text-white"
+                        : "bg-white"
+                      }`}
+                  >
+                    {option.name}
 
-      <span className="ml-1 text-[10px]">
-        +{option.price}
-      </span>
-    </button>
-  );
-})}
-
-
-{/* ==================== TACOS ==================== */}
-
-{(isTacos || isBurger) && (
-  <>
-
-    {/* Gratiné */}
-    {gratineOptions.length > 0 && (
-      <div className="mt-5">
-
-        <h3 className="font-semibold text-brand-green mb-3">
-          Gratiné
-        </h3>
-
-        <div className="flex flex-wrap gap-2">
-
-          {gratineOptions.map((option) => {
-
-            const isSelected =
-              selectedGratine?.id === option.id;
-
-            return (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => {
-                  setSelectedGratine(
-                    isSelected ? null : option
-                  );
-                }}
-                className={`px-3 py-2 border rounded-lg text-xs ${
-                  isSelected
-                    ? "bg-brand-green text-white"
-                    : "bg-white"
-                }`}
-              >
-                {option.name.replace(/^gratiné\s*/i, "")}
-
-                <span className="ml-1 text-[10px]">
-                  +{Number(option.price).toLocaleString()} DA
-                </span>
-              </button>
-            );
-
-          })}
-
-        </div>
-
-      </div>
-    )}
+                    <span className="ml-1 text-[10px]">
+                      +{option.price}
+                    </span>
+                  </button>
+                );
+              })}
 
 
-    {/* Suppléments */}
-    {supplementOptions.length > 0 && (
-      <div className="mt-5">
+              {/* ==================== TACOS ==================== */}
 
-        <h3 className="font-semibold text-brand-green mb-3">
-          Suppléments
-        </h3>
+              {(isTacos || isBurger) && (
+                <>
 
-        <div className="flex flex-wrap gap-2">
+                  {/* Gratiné */}
+                  {gratineOptions.length > 0 && (
+                    <div className="mt-5">
 
-          {supplementOptions.map((option) => {
+                      <h3 className="font-semibold text-brand-green mb-3">
+                        Gratiné
+                      </h3>
 
-            const isSelected =
-              selectedSupplements.some(
-                item => item.id === option.id
-              );
+                      <div className="flex flex-wrap gap-2">
 
-            return (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => {
+                        {gratineOptions.map((option) => {
 
-                  setSelectedSupplements(prev => {
+                          const isSelected =
+                            selectedGratine?.id === option.id;
 
-                    if (isSelected) {
-                      return prev.filter(
-                        item => item.id !== option.id
-                      );
-                    }
+                          return (
+                            <button
+                              key={option.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedGratine(
+                                  isSelected ? null : option
+                                );
+                              }}
+                              className={`px-3 py-2 border rounded-lg text-xs ${isSelected
+                                  ? "bg-brand-green text-white"
+                                  : "bg-white"
+                                }`}
+                            >
+                              {option.name.replace(/^gratiné\s*/i, "")}
 
-                    return [...prev, option];
+                              <span className="ml-1 text-[10px]">
+                                +{Number(option.price).toLocaleString()} DA
+                              </span>
+                            </button>
+                          );
 
-                  });
+                        })}
 
-                }}
-                className={`px-3 py-2 border rounded-lg text-xs ${
-                  isSelected
-                    ? "bg-brand-green text-white"
-                    : "bg-white"
-                }`}
-              >
-                {option.name.replace(/^supplément\s*/i, "")}
+                      </div>
 
-                <span className="ml-1 text-[10px]">
-                  +{Number(option.price).toLocaleString()} DA
-                </span>
-              </button>
-            );
+                    </div>
+                  )}
 
-          })}
 
-        </div>
+                  {/* Suppléments */}
+                  {supplementOptions.length > 0 && (
+                    <div className="mt-5">
 
-      </div>
-    )}
+                      <h3 className="font-semibold text-brand-green mb-3">
+                        Suppléments
+                      </h3>
 
-  </>
-)}
+                      <div className="flex flex-wrap gap-2">
+
+                        {supplementOptions.map((option) => {
+
+                          const isSelected =
+                            selectedSupplements.some(
+                              item => item.id === option.id
+                            );
+
+                          return (
+                            <button
+                              key={option.id}
+                              type="button"
+                              onClick={() => {
+
+                                setSelectedSupplements(prev => {
+
+                                  if (isSelected) {
+                                    return prev.filter(
+                                      item => item.id !== option.id
+                                    );
+                                  }
+
+                                  return [...prev, option];
+
+                                });
+
+                              }}
+                              className={`px-3 py-2 border rounded-lg text-xs ${isSelected
+                                  ? "bg-brand-green text-white"
+                                  : "bg-white"
+                                }`}
+                            >
+                              {option.name.replace(/^supplément\s*/i, "")}
+
+                              <span className="ml-1 text-[10px]">
+                                +{Number(option.price).toLocaleString()} DA
+                              </span>
+                            </button>
+                          );
+
+                        })}
+
+                      </div>
+
+                    </div>
+                  )}
+
+                </>
+              )}
             </div>
           </div>
         )}
@@ -523,12 +520,14 @@ export default function ProductCard({ product, onAddToCart, onQuickView, setting
                     : [],
                 selectedCrepeSteps,
                 selectedFormula,
+                selectedGratine,
+                selectedSupplements,
                 price: finalPrice,
               });
             }}
             className={`px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300 border ${settings?.is_open
-                ? "bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
-                : "bg-gray-400 text-white border-gray-400 cursor-not-allowed"
+              ? "bg-brand-green hover:bg-brand-gold text-brand-ivory hover:text-brand-green border-brand-green/20 hover:border-brand-gold/30 cursor-pointer"
+              : "bg-gray-400 text-white border-gray-400 cursor-not-allowed"
               }`}
           >
             {settings?.is_open ? "Ajouter" : "Restaurant fermé"}
