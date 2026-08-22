@@ -326,51 +326,11 @@ export default function App() {
   }, [cartSubtotal]);
 
   // Handle Cart operators
- const handleAddToCart = (product: Product) => {
-  console.log("ADDING PRODUCT =", product);
+  const handleAddToCart = (product: Product) => {
+    console.log("ADDING PRODUCT =", product);
 
-  setCart((prev) => {
-    const exists = prev.find((item) => {
-      const sameProduct =
-        item.product.id === product.id;
-
-      const sameVariant =
-        item.product.selectedVariant?.id ===
-        product.selectedVariant?.id;
-
-      const sameOptions =
-        JSON.stringify(item.product.selectedOptions) ===
-        JSON.stringify(product.selectedOptions);
-
-      const sameGratine =
-        item.product.selectedGratine?.id ===
-        product.selectedGratine?.id;
-
-      const sameSupplements =
-        JSON.stringify(item.product.selectedSupplements) ===
-        JSON.stringify(product.selectedSupplements);
-
-      const sameCrepeSteps =
-        JSON.stringify(item.product.selectedCrepeSteps) ===
-        JSON.stringify(product.selectedCrepeSteps);
-
-      const sameFormula =
-        item.product.selectedFormula?.id ===
-        product.selectedFormula?.id;
-
-      return (
-        sameProduct &&
-        sameVariant &&
-        sameOptions &&
-        sameGratine &&
-        sameSupplements &&
-        sameCrepeSteps &&
-        sameFormula
-      );
-    });
-
-    if (exists) {
-      return prev.map((item) => {
+    setCart((prev) => {
+      const exists = prev.find((item) => {
         const sameProduct =
           item.product.id === product.id;
 
@@ -398,7 +358,7 @@ export default function App() {
           item.product.selectedFormula?.id ===
           product.selectedFormula?.id;
 
-        if (
+        return (
           sameProduct &&
           sameVariant &&
           sameOptions &&
@@ -406,27 +366,67 @@ export default function App() {
           sameSupplements &&
           sameCrepeSteps &&
           sameFormula
-        ) {
-          return {
-            ...item,
-            quantity: item.quantity + 1,
-          };
-        }
-
-        return item;
+        );
       });
-    }
 
-    return [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        product: structuredClone(product),
-        quantity: 1,
-      },
-    ];
-  });
-};
+      if (exists) {
+        return prev.map((item) => {
+          const sameProduct =
+            item.product.id === product.id;
+
+          const sameVariant =
+            item.product.selectedVariant?.id ===
+            product.selectedVariant?.id;
+
+          const sameOptions =
+            JSON.stringify(item.product.selectedOptions) ===
+            JSON.stringify(product.selectedOptions);
+
+          const sameGratine =
+            item.product.selectedGratine?.id ===
+            product.selectedGratine?.id;
+
+          const sameSupplements =
+            JSON.stringify(item.product.selectedSupplements) ===
+            JSON.stringify(product.selectedSupplements);
+
+          const sameCrepeSteps =
+            JSON.stringify(item.product.selectedCrepeSteps) ===
+            JSON.stringify(product.selectedCrepeSteps);
+
+          const sameFormula =
+            item.product.selectedFormula?.id ===
+            product.selectedFormula?.id;
+
+          if (
+            sameProduct &&
+            sameVariant &&
+            sameOptions &&
+            sameGratine &&
+            sameSupplements &&
+            sameCrepeSteps &&
+            sameFormula
+          ) {
+            return {
+              ...item,
+              quantity: item.quantity + 1,
+            };
+          }
+
+          return item;
+        });
+      }
+
+      return [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          product: structuredClone(product),
+          quantity: 1,
+        },
+      ];
+    });
+  };
 
   const handleUpdateCartQuantity = (id: string, delta: number) => {
     setCart(prev =>
@@ -509,25 +509,49 @@ export default function App() {
         items: cart.map((item) => ({
           productId: item.product.id,
 
-          price:
-            Number(item.product.price),
+          price: Number(item.product.price),
 
           quantity: item.quantity,
 
+          // Taille du Tacos
           variantName:
             item.product.selectedVariant?.name || null,
 
+          // Tous les détails du produit
           optionName: [
+            // Sandwich
             item.product.selectedOptions?.length
-              ? `Options : ${item.product.selectedOptions.map((option) => option.name).join(", ")}`
+              ? `Options : ${item.product.selectedOptions
+                .map((option) => option.name)
+                .join(", ")}`
               : "",
+
+            // Tacos / Burger : gratiné
+            item.product.selectedGratine
+              ? `Gratiné : ${item.product.selectedGratine.name}`
+              : "",
+
+            // Tacos / Burger : suppléments
+            item.product.selectedSupplements?.length
+              ? `Suppléments : ${item.product.selectedSupplements
+                .map((supplement) => supplement.name)
+                .join(", ")}`
+              : "",
+
+            // Crêpe
             item.product.selectedCrepeSteps?.length
-              ? `Étapes : ${item.product.selectedCrepeSteps.map((step) => step.name).join(", ")}`
+              ? `Étapes : ${item.product.selectedCrepeSteps
+                .map((step) => step.name)
+                .join(", ")}`
               : "",
+
+            // Formule
             item.product.selectedFormula
               ? `Formule : ${item.product.selectedFormula.name}`
               : "",
-          ].filter(Boolean).join(" • ") || null,
+          ]
+            .filter(Boolean)
+            .join(" • ") || null,
 
           crepeSteps:
             item.product.selectedCrepeSteps
@@ -1147,10 +1171,35 @@ export default function App() {
                             </h3>
                             {item.product.selectedVariant && (
                               <p className="text-xs text-gray-500">
-                                Taille: {item.product.selectedVariant.name}
+                                Taille : {item.product.selectedVariant.name}
                               </p>
-
                             )}
+
+                            {item.product.selectedGratine && (
+                              <p className="text-xs text-gray-500">
+                                Gratiné : {item.product.selectedGratine.name}
+                              </p>
+                            )}
+
+                            {item.product.selectedSupplements &&
+                              item.product.selectedSupplements.length > 0 && (
+                                <p className="text-xs text-gray-500">
+                                  Suppléments :{" "}
+                                  {item.product.selectedSupplements
+                                    .map(s => s.name)
+                                    .join(", ")}
+                                </p>
+                              )}
+
+                            {item.product.selectedOptions &&
+                              item.product.selectedOptions.length > 0 && (
+                                <p className="text-xs text-gray-500">
+                                  Options :{" "}
+                                  {item.product.selectedOptions
+                                    .map(o => o.name)
+                                    .join(", ")}
+                                </p>
+                              )}
 
                             {item.product.selectedOptions &&
                               item.product.selectedOptions.length > 0 && (

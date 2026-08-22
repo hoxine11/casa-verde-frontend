@@ -400,15 +400,84 @@ ${order.status === 'pending'
                         </span>
                       </div>
 
+                      {/* Taille */}
                       {item.variant_name && (
                         <div className="mt-1 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-50 text-green-700 text-[11px] font-medium">
                           📏 Taille : {item.variant_name}
                         </div>
                       )}
 
+                      {/* Détails des options */}
                       {item.option_name && (
-                        <div className="mt-1 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-medium">
-                          🧀 Option : {item.option_name}
+                        <div className="mt-2 space-y-1">
+
+                          {item.option_name
+                            .split(" • ")
+                            .map((detail: string, index: number) => {
+
+                              // Options Sandwich / Burger
+                              if (detail.startsWith("Options :")) {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="inline-flex items-center gap-1 px-2 py-1 mr-1 rounded-full bg-purple-50 text-purple-700 text-[11px] font-medium"
+                                  >
+                                    🧀 {detail}
+                                  </div>
+                                );
+                              }
+
+                              // Gratiné Tacos / Burger
+                              if (detail.startsWith("Gratiné :")) {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="inline-flex items-center gap-1 px-2 py-1 mr-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-medium"
+                                  >
+                                    🧀 {detail}
+                                  </div>
+                                );
+                              }
+
+                              // Suppléments Tacos / Burger
+                              if (detail.startsWith("Suppléments :")) {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="inline-flex items-center gap-1 px-2 py-1 mr-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-medium"
+                                  >
+                                    ➕ {detail}
+                                  </div>
+                                );
+                              }
+
+                              // Étapes Crêpe
+                              if (detail.startsWith("Étapes :")) {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="inline-flex items-center gap-1 px-2 py-1 mr-1 rounded-full bg-pink-50 text-pink-700 text-[11px] font-medium"
+                                  >
+                                    🍓 {detail}
+                                  </div>
+                                );
+                              }
+
+                              // Formule
+                              if (detail.startsWith("Formule :")) {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="inline-flex items-center gap-1 px-2 py-1 mr-1 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-medium"
+                                  >
+                                    🍫 {detail}
+                                  </div>
+                                );
+                              }
+
+                              return null;
+                            })}
+
                         </div>
                       )}
                     </li>
