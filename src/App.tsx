@@ -280,6 +280,15 @@ export default function App() {
       .catch(console.error);
   }, []);
   const [cart, setCart] = useState<CartItem[]>([]);
+  // ================= ADMIN : AJOUT D'UN PRODUIT À UNE COMMANDE =================
+
+  const [adminAddMode, setAdminAddMode] = useState(false);
+
+  const [adminEditingOrder, setAdminEditingOrder] =
+    useState<Order | null>(null);
+
+  const [adminEditingItems, setAdminEditingItems] =
+    useState<OrderItem[]>([]);
   const [selectedQuickProduct, setSelectedQuickProduct] = useState<Product | null>(null);
 
   // Checkout inputs state
@@ -324,9 +333,101 @@ export default function App() {
   const cartTotal = useMemo(() => {
     return cartSubtotal;
   }, [cartSubtotal]);
+  const handleStartAdminAddProduct = (
+    order: Order,
+    currentItems: OrderItem[]
+  ) => {
+    console.log("ADMIN ADD PRODUCT MODE");
+    console.log("ORDER =", order);
+    console.log("CURRENT ITEMS =", currentItems);
 
+    setAdminEditingOrder(order);
+    setAdminEditingItems(currentItems);
+    setAdminAddMode(true);
+
+    // Aller vers la vraie page des produits
+    setActiveView("menu");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
   // Handle Cart operators
   const handleAddToCart = (product: Product) => {
+
+    // =====================================================
+    // AJOUT D'UN PRODUIT À UNE COMMANDE ADMIN EXISTANTE
+    // =====================================================
+
+    if (adminAddMode && adminEditingOrder) {
+
+      const newItem: OrderItem = {
+        id: Date.now(),
+        productId: product.id.toString(),
+        name: product.name,
+
+        // IMPORTANT :
+        // ProductCard nous donne déjà le prix final
+        price: Number(product.price),
+
+        quantity: 1,
+
+        variant_name:
+          product.selectedVariant?.name || "",
+
+        option_name: [
+          product.selectedOptions?.length
+            ? `Options : ${product.selectedOptions
+              .map(option => option.name)
+              .join(", ")}`
+            : "",
+
+          product.selectedGratine
+            ? `Gratiné : ${product.selectedGratine.name}`
+            : "",
+
+          product.selectedSupplements?.length
+            ? `Suppléments : ${product.selectedSupplements
+              .map(supplement => supplement.name)
+              .join(", ")}`
+            : "",
+
+          product.selectedCrepeSteps?.length
+            ? `Étapes : ${product.selectedCrepeSteps
+              .map(step => step.name)
+              .join(", ")}`
+            : "",
+
+          product.selectedFormula
+            ? `Formule : ${product.selectedFormula.name}`
+            : "",
+        ]
+          .filter(Boolean)
+          .join(" • ") || undefined,
+      };
+
+      console.log("ADMIN NEW ITEM =", newItem);
+
+      setAdminEditingItems(prev => [
+        ...prev,
+        newItem,
+      ]);
+
+      // Quitter le mode ajout
+      setAdminAddMode(false);
+
+      // Retourner automatiquement à l'administration
+      setActiveView("admin");
+      setActiveAdminTab("orders");
+
+      return;
+    }
+
+    // =====================================================
+    // LOGIQUE NORMALE DU PANIER
+    // =====================================================
+
     console.log("ADDING PRODUCT =", product);
 
     setCart((prev) => {
@@ -1799,6 +1900,8 @@ export default function App() {
                       settings={settings}
                       products={products}
                       refreshOrders={refreshOrders}
+                      onStartAdminAddProduct={handleStartAdminAddProduct}
+                      adminEditingItems={adminEditingItems}
                     />
                   )}
 

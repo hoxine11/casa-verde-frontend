@@ -10,23 +10,34 @@ import { printOrder } from "../utils/printOrder";
 import { Settings } from "../types";
 interface AdminOrdersProps {
   orders: Order[];
-  products: Product[];
 
   onUpdateStatus: (
     id: number,
     status: Order["status"]
-  ) => void;
+  ) => Promise<void>;
 
   onDeleteOrder: (
     id: number
-  ) => void;
+  ) => Promise<void>;
 
   selectedOrder: Order | null;
-  setSelectedOrder: (order: Order | null) => void;
+
+  setSelectedOrder: (
+    order: Order | null
+  ) => void;
 
   settings: Settings;
 
+  products: Product[];
+
   refreshOrders: () => Promise<void>;
+
+  onStartAdminAddProduct: (
+    order: Order,
+    currentItems: OrderItem[]
+  ) => void;
+
+  adminEditingItems: OrderItem[];
 }
 
 export default function AdminOrders({
@@ -37,7 +48,9 @@ export default function AdminOrders({
   setSelectedOrder,
   settings,
   products,
-  refreshOrders
+  refreshOrders,
+  onStartAdminAddProduct,
+  adminEditingItems,
 }: AdminOrdersProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -633,7 +646,12 @@ ${order.status === 'pending'
               ))}
             </div>
             <button
-              onClick={() => setShowAddProductModal(true)}
+              onClick={() => {
+                onStartAdminAddProduct(
+                  editingOrder,
+                  editItems
+                );
+              }}
               className="mt-5 w-full py-3 rounded-xl bg-brand-green text-white hover:bg-brand-gold transition-all"
             >
               + Ajouter un produit
