@@ -1902,6 +1902,7 @@ export default function App() {
                       refreshOrders={refreshOrders}
                       onStartAdminAddProduct={handleStartAdminAddProduct}
                       adminEditingItems={adminEditingItems}
+                      adminEditingOrder={adminEditingOrder}
                     />
                   )}
 

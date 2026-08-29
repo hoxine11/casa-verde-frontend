@@ -10,6 +10,7 @@ import { printOrder } from "../utils/printOrder";
 import { Settings } from "../types";
 interface AdminOrdersProps {
   orders: Order[];
+  products: Product[];
 
   onUpdateStatus: (
     id: number,
@@ -28,8 +29,6 @@ interface AdminOrdersProps {
 
   settings: Settings;
 
-  products: Product[];
-
   refreshOrders: () => Promise<void>;
 
   onStartAdminAddProduct: (
@@ -38,6 +37,8 @@ interface AdminOrdersProps {
   ) => void;
 
   adminEditingItems: OrderItem[];
+
+  adminEditingOrder: Order | null;
 }
 
 export default function AdminOrders({
@@ -51,6 +52,7 @@ export default function AdminOrders({
   refreshOrders,
   onStartAdminAddProduct,
   adminEditingItems,
+  adminEditingOrder,
 }: AdminOrdersProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -99,6 +101,33 @@ export default function AdminOrders({
   const deliveryFee = Number(editingOrder?.deliveryFee || 0);
 
   const editTotal = editSubtotal + deliveryFee;
+  useEffect(() => {
+
+  if (
+    adminEditingOrder &&
+    adminEditingItems.length > 0
+  ) {
+
+    console.log(
+      "RESTORE ADMIN EDIT ORDER",
+      adminEditingOrder
+    );
+
+    console.log(
+      "RESTORE ITEMS",
+      adminEditingItems
+    );
+
+    setEditingOrder(adminEditingOrder);
+
+    setEditItems(adminEditingItems);
+
+  }
+
+}, [
+  adminEditingOrder,
+  adminEditingItems
+]);
   return (
     <div className="space-y-8">
       {/* Title block */}
@@ -645,17 +674,15 @@ ${order.status === 'pending'
                 </div>
               ))}
             </div>
-            <button
-              onClick={() => {
-                onStartAdminAddProduct(
-                  editingOrder,
-                  editItems
-                );
-              }}
-              className="mt-5 w-full py-3 rounded-xl bg-brand-green text-white hover:bg-brand-gold transition-all"
-            >
-              + Ajouter un produit
-            </button>
+          <button
+  type="button"
+  onClick={() => {
+    setShowAddProductModal(true);
+  }}
+  className="mt-5 w-full py-3 rounded-xl bg-brand-green text-white hover:bg-brand-gold transition-all"
+>
+  + Ajouter un produit
+</button>
             <div className="border-t mt-6 pt-5 space-y-3">
 
               <div className="flex justify-between text-lg">
