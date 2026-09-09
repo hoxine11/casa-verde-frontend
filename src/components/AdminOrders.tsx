@@ -67,15 +67,21 @@ export default function AdminOrders({
   const [editPhone, setEditPhone] = useState("");
   const [editAddress, setEditAddress] = useState("");
   const [editItems, setEditItems] = useState<OrderItem[]>([]);
-  const [showAddProductModal, setShowAddProductModal] = useState(false);
+  // const [showAddProductModal, setShowAddProductModal] = useState(false);
   useEffect(() => {
-    if (editingOrder) {
-      setEditCustomerName(editingOrder.customerName);
-      setEditPhone(editingOrder.phone);
-      setEditAddress(editingOrder.address);
+    if (!editingOrder) return;
+
+    setEditCustomerName(editingOrder.customerName);
+    setEditPhone(editingOrder.phone);
+    setEditAddress(editingOrder.address);
+
+    // إذا جايين من Menu بإضافة منتج، استعمل القائمة الجديدة
+    if (adminEditingOrder?.id === editingOrder.id) {
+      setEditItems(adminEditingItems);
+    } else {
       setEditItems(editingOrder.items);
     }
-  }, [editingOrder]);
+  }, [editingOrder, adminEditingOrder, adminEditingItems]);
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       String(order.id).includes(searchQuery) ||
@@ -102,32 +108,17 @@ export default function AdminOrders({
 
   const editTotal = editSubtotal + deliveryFee;
   useEffect(() => {
+    if (!adminEditingOrder) return;
 
-  if (
-    adminEditingOrder &&
-    adminEditingItems.length > 0
-  ) {
-
-    console.log(
-      "RESTORE ADMIN EDIT ORDER",
-      adminEditingOrder
-    );
-
-    console.log(
-      "RESTORE ITEMS",
-      adminEditingItems
-    );
+    console.log("RESTORE ADMIN EDIT ORDER", adminEditingOrder);
+    console.log("RESTORE ITEMS", adminEditingItems);
 
     setEditingOrder(adminEditingOrder);
-
+    setEditCustomerName(adminEditingOrder.customerName);
+    setEditPhone(adminEditingOrder.phone);
+    setEditAddress(adminEditingOrder.address);
     setEditItems(adminEditingItems);
-
-  }
-
-}, [
-  adminEditingOrder,
-  adminEditingItems
-]);
+  }, [adminEditingOrder, adminEditingItems]);
   return (
     <div className="space-y-8">
       {/* Title block */}
@@ -674,15 +665,15 @@ ${order.status === 'pending'
                 </div>
               ))}
             </div>
-          <button
-  type="button"
-  onClick={() => {
-    setShowAddProductModal(true);
-  }}
-  className="mt-5 w-full py-3 rounded-xl bg-brand-green text-white hover:bg-brand-gold transition-all"
->
-  + Ajouter un produit
-</button>
+            <button
+              type="button"
+              onClick={() => {
+                onStartAdminAddProduct(editingOrder, editItems);
+              }}
+              className="mt-5 w-full py-3 rounded-xl bg-brand-green text-white hover:bg-brand-gold transition-all"
+            >
+              + Ajouter un produit
+            </button>
             <div className="border-t mt-6 pt-5 space-y-3">
 
               <div className="flex justify-between text-lg">
@@ -757,7 +748,7 @@ ${order.status === 'pending'
         </div>
 
       )}
-      {showAddProductModal && (
+      {/* {showAddProductModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]">
 
           <div className="bg-white rounded-2xl w-[600px] max-h-[80vh] overflow-auto p-6">
@@ -859,7 +850,7 @@ ${order.status === 'pending'
 
         </div>
 
-      )}
+      )} */}
 
     </div>
 
