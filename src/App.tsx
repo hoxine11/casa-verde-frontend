@@ -361,44 +361,26 @@ export default function App() {
     // =====================================================
 
     if (adminAddMode && adminEditingOrder) {
-
       const newItem: OrderItem = {
         id: Date.now(),
         productId: product.id.toString(),
         name: product.name,
-
-        // IMPORTANT :
-        // ProductCard nous donne déjà le prix final
         price: Number(product.price),
-
         quantity: 1,
-
-        variant_name:
-          product.selectedVariant?.name || "",
-
+        variant_name: product.selectedVariant?.name || "",
         option_name: [
           product.selectedOptions?.length
-            ? `Options : ${product.selectedOptions
-              .map(option => option.name)
-              .join(", ")}`
+            ? `Options : ${product.selectedOptions.map(o => o.name).join(", ")}`
             : "",
-
           product.selectedGratine
             ? `Gratiné : ${product.selectedGratine.name}`
             : "",
-
           product.selectedSupplements?.length
-            ? `Suppléments : ${product.selectedSupplements
-              .map(supplement => supplement.name)
-              .join(", ")}`
+            ? `Suppléments : ${product.selectedSupplements.map(o => o.name).join(", ")}`
             : "",
-
           product.selectedCrepeSteps?.length
-            ? `Étapes : ${product.selectedCrepeSteps
-              .map(step => step.name)
-              .join(", ")}`
+            ? `Étapes : ${product.selectedCrepeSteps.map(s => s.name).join(", ")}`
             : "",
-
           product.selectedFormula
             ? `Formule : ${product.selectedFormula.name}`
             : "",
@@ -407,19 +389,12 @@ export default function App() {
           .join(" • ") || undefined,
       };
 
-      console.log("ADMIN NEW ITEM =", newItem);
+      setAdminEditingItems(prev => [...prev, newItem]);
 
-      setAdminEditingItems(prev => [
-        ...prev,
-        newItem,
-      ]);
-
-      // Quitter le mode ajout
-      setAdminAddMode(false);
-
-      // Retourner automatiquement à l'administration
-      setActiveView("admin");
-      setActiveAdminTab("orders");
+      // IMPORTANT :
+      // on reste dans le menu pour pouvoir ajouter d'autres produits
+      setAdminAddMode(true);
+      setActiveView("menu");
 
       return;
     }
@@ -1139,6 +1114,31 @@ export default function App() {
               exit={{ opacity: 0 }}
               className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
             >
+              {adminAddMode && adminEditingOrder && (
+                <div className="mb-8 flex items-center justify-between rounded-2xl border border-brand-gold/30 bg-brand-gold/10 p-4">
+                  <div>
+                    <p className="text-sm font-bold text-brand-green">
+                      Ajout de produits à la commande #{adminEditingOrder.id}
+                    </p>
+
+                    <p className="text-xs text-brand-green/70 mt-1">
+                      Sélectionnez et configurez autant de produits que nécessaire.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAdminAddMode(false);
+                      setActiveView("admin");
+                      setActiveAdminTab("orders");
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-brand-green text-brand-ivory text-xs font-bold hover:bg-brand-gold transition-all"
+                  >
+                    ← Terminer l'ajout
+                  </button>
+                </div>
+              )}
               <div className="mb-12">
                 <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-extrabold text-brand-gold-dark mb-1 block">
                   Notre Carte d'Exception
